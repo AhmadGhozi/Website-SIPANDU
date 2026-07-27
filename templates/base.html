@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} | SI-PADU</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1B2A52;
+            --navy-light: #26386B;
+        }
+        body { background-color: #F4F6FB; font-size: .9rem; }
+
+        /* Sidebar */
+        #sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background-color: var(--navy);
+            color: #fff;
+        }
+        #sidebar .nav-link {
+            color: rgba(255,255,255,.75);
+            border-radius: .5rem;
+            padding: .55rem .8rem;
+        }
+        #sidebar .nav-link:hover { background-color: rgba(255,255,255,.08); color: #fff; }
+        #sidebar .nav-link.active { background-color: #2F5FD6; color: #fff; }
+        #sidebar .nav-link i { width: 20px; }
+        #sidebar .section-label {
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: rgba(255,255,255,.4);
+            padding: 1rem .8rem .4rem;
+        }
+        #sidebar .brand-icon {
+            width: 38px; height: 38px;
+            background-color: #2F5FD6;
+            border-radius: .6rem;
+        }
+        #sidebar .submenu .nav-link { padding-left: 2.5rem; font-size: .85rem; }
+
+        .stat-icon {
+            width: 42px; height: 42px;
+            border-radius: .7rem;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.1rem;
+        }
+
+        @media (max-width: 860px) {
+            #sidebar { position: fixed; z-index: 1050; left: -260px; transition: left .25s ease; }
+            #sidebar.show { left: 0; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="d-flex">
+
+    <!--SIDEBAR-->
+    <aside id="sidebar" class="d-flex flex-column flex-shrink-0 p-3">
+        <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary-subtle">
+            <div class="brand-icon d-flex align-items-center justify-content-center">
+                <i class="bi bi-house-door-fill text-white"></i>
+            </div>
+            <div>
+                <div class="fw-bold">SIPADU-KB</div>
+                <div class="small text-white-50" style="font-size:.7rem;">Pelayanan & Data Terpadu</div>
+            </div>
+        </div>
+
+        <div class="section-label">Menu Utama</div>
+        <ul class="nav nav-pills flex-column mb-2">
+            <li class="nav-item">
+                <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-box-seam me-2"></i> Aset</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuSurat">
+                    <i class="bi bi-envelope-fill me-2"></i> Surat
+                    <i class="bi bi-chevron-down float-end small mt-1"></i>
+                </a>
+                <div class="collapse submenu" id="menuSurat">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a href="#" class="nav-link">Nota Dinas</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Lembar Disposisi</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Surat Keluar/Masuk</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-cart-fill me-2"></i> Permintaan ATK</a>
+            </li>
+        </ul>
+
+        <div class="section-label">Konfigurasi</div>
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-gear-fill me-2"></i> Pengaturan</a>
+            </li>
+        </ul>
+
+        <div class="mt-auto pt-3 border-top border-secondary-subtle d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                     style="width:34px;height:34px;">
+                    {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username|slice:":1"|upper }}{% else %}U{% endif %}
+                </div>
+                <div>
+                    <div class="small fw-semibold">
+                        {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% else %}Tamu{% endif %}
+                    </div>
+                    <div class="text-white-50" style="font-size:.7rem;">Administrator</div>
+                </div>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm text-white-50" title="Keluar">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ============ MAIN AREA ============ -->
+    <div class="flex-grow-1 min-vw-0">
+
+        <!-- Topbar -->
+        <header class="d-flex align-items-center gap-3 bg-white border-bottom px-4" style="height:68px;">
+            <button class="btn btn-light d-md-none" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h1 class="h6 mb-0 fw-semibold">{% block page_title %}Dashboard{% endblock %}</h1>
+
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="input-group d-none d-md-flex" style="width:260px;">
+                    <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control bg-light border-0" placeholder="Cari di sistem...">
+                </div>
+
+                <button class="btn btn-light position-relative">
+                    <i class="bi bi-bell-fill text-muted"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger p-1"></span>
+                </button>
+
+                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                     style="width:38px;height:38px;background-color:var(--navy);">
+                    {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username|slice:":1"|upper }}{% else %}U{% endif %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="p-4">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('sidebarToggle')?.addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('show');
+    });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
