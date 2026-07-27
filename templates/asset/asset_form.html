@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ judul }}{% endblock %}
+{% block page_title %}{{ judul }}{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2 class="fw-bold">{{ judul }}</h2>
+    <p class="text-muted mb-0">Lengkapi data asset di bawah ini</p>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Kode Barang</label>
+                    {{ form.kode_barang }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nama Barang</label>
+                    {{ form.nama_barang }}
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Merk / Type</label>
+                    {{ form.merk_type }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Jumlah</label>
+                    {{ form.jumlah }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Harga Satuan</label>
+                    {{ form.harga_satuan }}
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">Simpan</button>
+                <a href="{% url 'asset:asset_list' %}" class="btn btn-light border">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
