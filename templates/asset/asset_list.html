@@ -64,9 +64,12 @@
                         <a href="{% url 'asset:asset_update' asset.pk %}" class="btn btn-sm btn-light border">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <a href="{% url 'asset:asset_delete' asset.pk %}" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i> Hapus
-                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger"
+                        data-bs-toggle="modal" data-bs-target="#modalHapus"
+                        data-nama="{{ asset.nama_barang }}" data-kode="{{ asset.kode_barang }}"
+                        data-url="{% url 'asset:asset_delete' asset.pk %}">
+                        <i class="bi bi-trash"></i> Hapus
+                    </button>
                     </td>
                 </tr>
                 {% empty %}
@@ -79,4 +82,44 @@
     </div>
 </div>
 
+<!-- Modal Konfirmasi Hapus -->
+<div class="modal fade" id="modalHapus" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Hapus Asset?</h5>
+                <p class="text-muted mb-4">
+                    Yakin ingin menghapus <strong id="namaAssetHapus"></strong>
+                    (<span id="kodeAssetHapus"></span>)? Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <form method="post" id="formHapus">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger px-4">Ya, Hapus</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const modalHapus = document.getElementById('modalHapus');
+    modalHapus.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const nama = button.getAttribute('data-nama');
+        const kode = button.getAttribute('data-kode');
+        const url = button.getAttribute('data-url');
+
+        document.getElementById('namaAssetHapus').textContent = nama;
+        document.getElementById('kodeAssetHapus').textContent = kode;
+        document.getElementById('formHapus').setAttribute('action', url);
+    });
+</script>
 {% endblock %}
