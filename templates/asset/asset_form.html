@@ -42,6 +42,11 @@
                         <label class="form-label fw-semibold mb-1">Kode Barang</label>
                         <p class="text-muted small mb-1" style="font-size: .75rem;">Format: AST-XXX (contoh: AST-009)</p>
                         {{ form.kode_barang }}
+                        {% if form.kode_barang.errors %}
+                        <div class="text-danger small mt-1">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.kode_barang.errors.0 }}
+                        </div>
+                        {% endif %}
                     </div>
 
                     <div class="mb-2">

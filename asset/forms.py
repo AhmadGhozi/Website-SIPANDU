@@ -13,3 +13,16 @@ class AssetForm(forms.ModelForm):
             'jumlah': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_jumlah'}),
             'harga_satuan': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_harga_satuan'}),
         }
+
+    def clean_kode_barang(self):
+        kode_barang = self.cleaned_data['kode_barang']
+        queryset = Asset.objects.filter(kode_barang=kode_barang)
+
+        # Saat mode edit, kecualikan data milik asset itu sendiri dari pengecekan
+        if self.instance.pk:
+            queryset = queryset.exclude(pk=self.instance.pk)
+
+        if queryset.exists():
+            raise forms.ValidationError('Kode barang ini sudah digunakan. Silakan gunakan kode lain.')
+
+        return kode_barang

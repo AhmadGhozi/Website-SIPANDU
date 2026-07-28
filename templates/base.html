@@ -56,6 +56,42 @@
                 width: 100%;
             }
         }
+        
+        .table-responsive thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        #assetTable {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        #assetTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        #assetTable thead th:last-child {
+            border-top-right-radius: 14px;
+        }
+        #assetTable thead th:first-child {
+            border-top-left-radius: 14px;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+        }
+        .table-responsive::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 14px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background-color: #C7CCDA;
+            border-radius: 14px;
+        }
 
         #sidebar .nav-link {
             color: rgba(255,255,255,.75);
