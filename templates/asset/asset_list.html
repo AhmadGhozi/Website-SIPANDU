@@ -52,6 +52,7 @@
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Jumlah</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Harga Satuan</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Total Nilai</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Kondisi</th>
                     <th class="text-end pe-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Aksi</th>
                 </tr>
             </thead>
@@ -68,21 +69,28 @@
                     <td>{{ asset.jumlah }}</td>
                     <td>{{ asset.harga_satuan|rupiah }}</td>
                     <td class="fw-semibold">{{ asset.total_nilai|rupiah }}</td>
+                    <td>
+                        {% if asset.kondisi == 'baik' %}
+                        <span class="badge bg-success">Baik</span>
+                        {% else %}
+                        <span class="badge bg-danger">Buruk</span>
+                        {% endif %}
+                    </td>
                     <td class="text-end pe-3">
                         <a href="{% url 'asset:asset_update' asset.pk %}" class="btn btn-sm btn-light border">
-                            <i class="bi bi-pencil"></i> Edit
+                            <i class="bi bi-pencil"></i>
                         </a>
                         <button type="button" class="btn btn-sm btn-outline-danger"
                                 data-bs-toggle="modal" data-bs-target="#modalHapus"
                                 data-nama="{{ asset.nama_barang }}" data-kode="{{ asset.kode_barang }}"
                                 data-url="{% url 'asset:asset_delete' asset.pk %}">
-                            <i class="bi bi-trash"></i> Hapus
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center text-muted py-4">Belum ada data asset.</td>
+                    <td colspan="8" class="text-center text-muted py-4">Belum ada data asset.</td>
                 </tr>
                 {% endfor %}
             </tbody>

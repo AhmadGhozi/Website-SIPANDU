@@ -40,7 +40,7 @@
                 <div>
                     <div class="mb-2">
                         <label class="form-label fw-semibold mb-1">Kode Barang</label>
-                        <p class="text-muted small mb-1" style="font-size: .75rem;">Format: AST-XXX (contoh: AST-009)</p>
+                        <p class="text-muted small mb-1" style="font-size: .75rem;">(contoh: 1.1.1.11.111.111.111)</p>
                         {{ form.kode_barang }}
                         {% if form.kode_barang.errors %}
                         <div class="text-danger small mt-1">
@@ -69,13 +69,17 @@
                             <label class="form-label fw-semibold mb-1">Harga Satuan (Rp)</label>
                             {{ form.harga_satuan }}
                         </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold mb-1">Kondisi</label>
+                            {{ form.kondisi }}
+                        </div>
                     </div>
 
                     <!-- Total Nilai Preview -->
                     <div class="rounded p-2 mb-3 d-flex justify-content-between align-items-center"
                          style="background-color: #FEF3E2;">
                         <div>
-                            <div class="fw-semibold small" style="color:#B45309;">Total Nilai Aset</div>
+                            <div class="fw-semibold small" style="color:#B45309;">Total Nilai Asset</div>
                             <div class="small" style="color:#B45309; font-size: .75rem;">
                                 <span id="previewJumlah">{{ form.jumlah.value|default:1 }}</span> unit ×
                                 Rp <span id="previewHargaText">{{ form.harga_satuan.value|default:0 }}</span>
