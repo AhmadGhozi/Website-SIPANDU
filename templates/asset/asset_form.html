@@ -1,49 +1,122 @@
 {% extends "base.html" %}
 
 {% block title %}{{ judul }}{% endblock %}
-{% block page_title %}{{ judul }}{% endblock %}
+{% block page_title %}Manajemen Asset{% endblock %}
 
 {% block content %}
 
-<div class="mb-4">
-    <h2 class="fw-bold">{{ judul }}</h2>
-    <p class="text-muted mb-0">Lengkapi data asset di bawah ini</p>
-</div>
+<!-- Breadcrumb -->
+<nav class="mb-3">
+    <a href="{% url 'asset:asset_list' %}" class="text-decoration-none fw-semibold text-primary">Manajemen Asset</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">{{ judul }}</span>
+</nav>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <form method="post">
-            {% csrf_token %}
+<div class="d-flex justify-content-center flex-grow-1">
+    <div class="card border-0 shadow-sm w-100 d-flex flex-column" style="max-width: 780px;">
 
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Kode Barang</label>
-                    {{ form.kode_barang }}
+        <div class="card-body border-bottom p-3 flex-shrink-0">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0
+                            {% if is_edit %}bg-warning{% else %}bg-primary{% endif %}"
+                     style="width: 38px; height: 38px;">
+                    {% if is_edit %}
+                        <i class="bi bi-pencil-fill text-white"></i>
+                    {% else %}
+                        <i class="bi bi-plus-lg text-white"></i>
+                    {% endif %}
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Nama Barang</label>
-                    {{ form.nama_barang }}
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label">Merk / Type</label>
-                    {{ form.merk_type }}
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Jumlah</label>
-                    {{ form.jumlah }}
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Harga Satuan</label>
-                    {{ form.harga_satuan }}
+                <div>
+                    <h5 class="fw-bold mb-0">{{ judul }}</h5>
+                    <p class="text-muted small mb-0">{{ subjudul }}</p>
                 </div>
             </div>
+        </div>
 
-            <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary px-4">Simpan</button>
-                <a href="{% url 'asset:asset_list' %}" class="btn btn-light border">Batal</a>
-            </div>
-        </form>
+        <div class="card-body p-3 d-flex flex-column flex-grow-1">
+            <form method="post" id="assetForm" class="d-flex flex-column flex-grow-1">
+                {% csrf_token %}
+
+                <div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold mb-1">Kode Barang</label>
+                        <p class="text-muted small mb-1" style="font-size: .75rem;">Format: AST-XXX (contoh: AST-009)</p>
+                        {{ form.kode_barang }}
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold mb-1">Nama Barang</label>
+                        {{ form.nama_barang }}
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold mb-1">Merk / Type</label>
+                        <p class="text-muted small mb-1" style="font-size: .75rem;">Pisahkan merk dan tipe dengan tanda /</p>
+                        {{ form.merk_type }}
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Jumlah (Unit)</label>
+                            {{ form.jumlah }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Harga Satuan (Rp)</label>
+                            {{ form.harga_satuan }}
+                        </div>
+                    </div>
+
+                    <!-- Total Nilai Preview -->
+                    <div class="rounded p-2 mb-3 d-flex justify-content-between align-items-center"
+                         style="background-color: #FEF3E2;">
+                        <div>
+                            <div class="fw-semibold small" style="color:#B45309;">Total Nilai Aset</div>
+                            <div class="small" style="color:#B45309; font-size: .75rem;">
+                                <span id="previewJumlah">{{ form.jumlah.value|default:1 }}</span> unit ×
+                                Rp <span id="previewHargaText">{{ form.harga_satuan.value|default:0 }}</span>
+                            </div>
+                        </div>
+                        <div class="fw-bold" style="color:#B45309;" id="previewTotal">Rp 0</div>
+                    </div>
+                </div>
+
+                <!-- Tombol ini akan otomatis terdorong ke bawah card -->
+                <div class="d-flex justify-content-end gap-2 mt-auto">
+                    <a href="{% url 'asset:asset_list' %}" class="btn btn-light border px-4">Batal</a>
+                    <button type="submit" class="btn px-4 text-white {% if is_edit %}btn-warning{% else %}btn-primary{% endif %}">
+                        {% if is_edit %}
+                            <i class="bi bi-check-lg me-1"></i> Simpan Perubahan
+                        {% else %}
+                            <i class="bi bi-plus-lg me-1"></i> Simpan Asset
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function formatRupiah(angka) {
+        angka = parseInt(angka) || 0;
+        return "Rp " + angka.toLocaleString('id-ID');
+    }
+
+    function hitungTotal() {
+        const jumlah = parseFloat(document.getElementById('id_jumlah').value) || 0;
+        const harga = parseFloat(document.getElementById('id_harga_satuan').value) || 0;
+        const total = jumlah * harga;
+
+        document.getElementById('previewJumlah').textContent = jumlah;
+        document.getElementById('previewHargaText').textContent = harga.toLocaleString('id-ID');
+        document.getElementById('previewTotal').textContent = formatRupiah(total);
+    }
+
+    document.getElementById('id_jumlah').addEventListener('input', hitungTotal);
+    document.getElementById('id_harga_satuan').addEventListener('input', hitungTotal);
+    hitungTotal();
+</script>
 {% endblock %}

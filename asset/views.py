@@ -35,7 +35,13 @@ def asset_create(request):
     else:
         form = AssetForm()
 
-    return render(request, 'asset/asset_form.html', {'form': form, 'judul': 'Tambah Asset'})
+    context = {
+        'form': form,
+        'judul': 'Tambah Asset Baru',
+        'subjudul': 'Lengkapi seluruh data asset di bawah ini',
+        'is_edit': False,
+    }
+    return render(request, 'asset/asset_form.html', context)
 
 
 def asset_update(request, pk):
@@ -49,7 +55,14 @@ def asset_update(request, pk):
     else:
         form = AssetForm(instance=asset)
 
-    return render(request, 'asset/asset_form.html', {'form': form, 'judul': 'Edit Asset'})
+    context = {
+        'form': form,
+        'judul': 'Edit Asset',
+        'subjudul': f'Kode barang: {asset.kode_barang}',
+        'is_edit': True,
+        'asset': asset,
+    }
+    return render(request, 'asset/asset_form.html', context)
 
 
 def asset_delete(request, pk):

@@ -20,10 +20,43 @@
         /* Sidebar */
         #sidebar {
             width: 260px;
-            min-height: 100vh;
+            height: 100vh;
             background-color: var(--navy);
             color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1030;
         }
+        
+        .main-content {
+            margin-left: 260px;
+            min-width: 0;
+            width: calc(100% - 260px);
+        }
+        
+        .page-content {
+            padding: 26px;
+            min-height: calc(100vh - 68px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (max-width: 860px) {
+            #sidebar {
+                left: -260px;
+                transition: left .25s ease;
+            }
+            #sidebar.show {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
         #sidebar .nav-link {
             color: rgba(255,255,255,.75);
             border-radius: .5rem;
@@ -136,7 +169,7 @@
     </aside>
 
     <!-- ============ MAIN AREA ============ -->
-    <div class="flex-grow-1 min-vw-0">
+    <div class="main-content">
 
         <!-- Topbar -->
         <header class="d-flex align-items-center gap-3 bg-white border-bottom px-4" style="height:68px;">
