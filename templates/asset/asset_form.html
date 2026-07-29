@@ -38,28 +38,32 @@
                 {% csrf_token %}
 
                 <div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold mb-1">Kode Barang</label>
-                        <p class="text-muted small mb-1" style="font-size: .75rem;">(contoh: 1.1.1.11.111.111.111)</p>
-                        {{ form.kode_barang }}
-                        {% if form.kode_barang.errors %}
-                        <div class="text-danger small mt-1">
-                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.kode_barang.errors.0 }}
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Kode Barang</label>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Contoh: 1.1.1.11.111.111.111</p>
+                            {{ form.kode_barang }}
                         </div>
-                        {% endif %}
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Nama Barang</label>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Contoh: Mobil/Motor/Kursi/Meja</p>
+                            {{ form.nama_barang }}
+                        </div>
                     </div>
 
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold mb-1">Nama Barang</label>
-                        {{ form.nama_barang }}
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Merk / Type</label>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Pisahkan merk dan tipe dengan tanda /</p>
+                            {{ form.merk_type }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Kondisi</label>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Baik/Kurang Baik/Buruk</p>
+                            {{ form.kondisi }}
+                        </div>
                     </div>
-
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold mb-1">Merk / Type</label>
-                        <p class="text-muted small mb-1" style="font-size: .75rem;">Pisahkan merk dan tipe dengan tanda /</p>
-                        {{ form.merk_type }}
-                    </div>
-
+                    
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Jumlah (Unit)</label>
@@ -70,8 +74,9 @@
                             {{ form.harga_satuan }}
                         </div>
                         <div class="mb-2">
-                            <label class="form-label fw-semibold mb-1">Kondisi</label>
-                            {{ form.kondisi }}
+                            <label class="form-label fw-semibold mb-1">Keterangan</label>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Opsional, catatan tambahan tentang asset ini</p>
+                            {{ form.keterangan }}
                         </div>
                     </div>
 

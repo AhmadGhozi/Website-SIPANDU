@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk | SIPANDU</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1B2A52;
+            --navy-light: #26386B;
+        }
+        body {
+            font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+        .login-shell {
+            min-height: 100vh;
+        }
+
+        /* ===== LEFT PANEL ===== */
+        .login-left {
+            background-color: var(--navy);
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .login-left::before, .login-left::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,.08);
+        }
+        .login-left::before {
+            width: 500px; height: 500px;
+            top: -150px; left: -100px;
+        }
+        .login-left::after {
+            width: 650px; height: 650px;
+            bottom: -250px; right: -150px;
+        }
+        .login-left .decor-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,.04);
+        }
+
+        .brand-icon-lg {
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,.15);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .badge-pill-outline {
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .8rem;
+            color: rgba(255,255,255,.9);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,.05);
+        }
+
+        .feature-pill {
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 999px;
+            padding: 8px 18px;
+            font-size: .85rem;
+            color: rgba(255,255,255,.9);
+            background: rgba(255,255,255,.05);
+        }
+
+        .login-heading {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        /* ===== RIGHT PANEL ===== */
+        .login-right {
+            background-color: #F4F6FB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        .login-form-wrap {
+            width: 100%;
+            max-width: 430px;
+        }
+        .form-control-login {
+            padding: .65rem 1rem .65rem 2.6rem;
+            border-radius: .6rem;
+        }
+        .input-icon-wrap {
+            position: relative;
+        }
+        .input-icon-wrap i.field-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9AA1B2;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9AA1B2;
+            background: none;
+            border: none;
+        }
+        .btn-login {
+            background-color: var(--navy);
+            color: #fff;
+            padding: .75rem;
+            border-radius: .6rem;
+            font-weight: 600;
+        }
+        .btn-login:hover { background-color: var(--navy-light); color: #fff; }
+
+        .demo-box {
+            background: #EDF0F8;
+            border-radius: .7rem;
+            padding: 14px 18px;
+        }
+
+        @media (max-width: 860px) {
+            .login-left { display: none; }
+            body { overflow: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="row g-0 login-shell">
+
+    <!-- LEFT PANEL -->
+    <div class="col-lg-6 login-left">
+        <div class="decor-circle" style="width:300px;height:300px; top:200px; left:250px;"></div>
+
+        <div>
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="brand-icon-lg">
+                    <i class="bi bi-house-door-fill fs-5"></i>
+                </div>
+                <div>
+                    <div class="fw-bold fs-5">SIPANDU</div>
+                    <div class="small text-white-50">Sistem Informasi Terpadu</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: relative; z-index: 2;">
+            <span class="badge-pill-outline mb-4">
+                <i class="bi bi-shield-lock-fill"></i> Sistem Terenkripsi &amp; Aman
+            </span>
+
+            <h1 class="login-heading mb-3">Kelola Administrasi<br>Instansi Lebih Mudah</h1>
+
+            <p class="text-white-50 mb-4" style="max-width: 480px;">
+                Platform terpadu untuk manajemen asset, persuratan, permintaan ATK,
+                dan pengaturan pengguna dalam satu sistem yang terintegrasi.
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+                <span class="feature-pill">Manajemen Asset</span>
+                <span class="feature-pill">Persuratan Digital</span>
+                <span class="feature-pill">Permintaan ATK</span>
+                <span class="feature-pill">Multi Pengguna</span>
+            </div>
+        </div>
+
+        <div class="small text-white-50" style="position: relative; z-index: 2;">
+            © {% now "Y" %} SIPANDU · Kementerian / Instansi Pemerintah
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="col-lg-6 login-right">
+        <div class="login-form-wrap">
+            <h3 class="fw-bold mb-1">Masuk ke Sistem</h3>
+            <p class="text-muted mb-4">Gunakan akun yang telah diberikan oleh administrator.</p>
+
+            {% if form.errors %}
+                <div class="alert alert-danger py-2 small">
+                    Username atau password salah. Silakan coba lagi.
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Username</label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-person-fill field-icon"></i>
+                        <input type="text" name="username" class="form-control form-control-login"
+                               placeholder="Masukkan username" required autofocus>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label fw-semibold mb-1">Password</label>
+                        <a href="#" class="small text-decoration-none">Lupa password?</a>
+                    </div>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-lock-fill field-icon"></i>
+                        <input type="password" name="password" id="passwordField"
+                               class="form-control form-control-login" placeholder="Masukkan password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="bi bi-eye-fill" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <button type="submit" class="btn btn-login w-100 mb-3">Masuk</button>
+            </form>
+
+            <p class="text-center small text-muted mb-0">
+                Butuh bantuan? Hubungi <a href="#" class="text-decoration-none fw-semibold">Tim IT Support</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const field = document.getElementById('passwordField');
+        const icon = document.getElementById('toggleIcon');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye-fill');
+            icon.classList.add('bi-eye-slash-fill');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash-fill');
+            icon.classList.add('bi-eye-fill');
+        }
+    }
+</script>
+</body>
+</html>

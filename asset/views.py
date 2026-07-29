@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Asset
 from .forms import AssetForm
 
-
+@login_required
 def asset_list(request):
     query = request.GET.get('q', '')
     daftar_asset = Asset.objects.all()
@@ -24,7 +25,7 @@ def asset_list(request):
     }
     return render(request, 'asset/asset_list.html', context)
 
-
+@login_required
 def asset_create(request):
     if request.method == 'POST':
         form = AssetForm(request.POST)
@@ -43,7 +44,7 @@ def asset_create(request):
     }
     return render(request, 'asset/asset_form.html', context)
 
-
+@login_required
 def asset_update(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     if request.method == 'POST':
@@ -64,7 +65,7 @@ def asset_update(request, pk):
     }
     return render(request, 'asset/asset_form.html', context)
 
-
+@login_required
 def asset_delete(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     if request.method == 'POST':

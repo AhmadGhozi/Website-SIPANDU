@@ -72,8 +72,10 @@
                     <td>
                         {% if asset.kondisi == 'baik' %}
                         <span class="badge bg-success">Baik</span>
+                        {% elif asset.kondisi == 'kurang_baik' %}
+                        <span class="badge bg-success">Kurang Baik</span>
                         {% else %}
-                        <span class="badge bg-danger">Buruk</span>
+                        <span class="badge bg-danger">Rusak</span>
                         {% endif %}
                     </td>
                     <td class="text-end pe-3">
