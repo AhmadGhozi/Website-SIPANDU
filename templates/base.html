@@ -185,7 +185,9 @@
                 <div class="collapse submenu" id="menuPengaturan">
                     <ul class="nav flex-column">
                         <li class="nav-item"><a href="#" class="nav-link">Data Barang</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Pengguna</a></li>
+                        <li class="nav-item">
+                            <a href="{% url 'pengguna:pengguna_list' %}" class="nav-link">Pengguna</a>
+                        </li>
                     </ul>
                 </div>
             </li>
@@ -201,7 +203,13 @@
                     <div class="small fw-semibold">
                         {% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% else %}Tamu{% endif %}
                     </div>
-                    <div class="text-white-50" style="font-size:.7rem;">Administrator</div>
+                    <div class="text-white-50" style="font-size:.7rem;">
+                        {% if request.user.is_authenticated and request.user.profile %}
+                            {{ request.user.profile.get_role_display }}
+                        {% else %}
+                            Pengguna
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <form method="post" action="{% url 'logout' %}">

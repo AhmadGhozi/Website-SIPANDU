@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Pengguna{% endblock %}
+{% block page_title %}Pengaturan / Pengguna{% endblock %}
+
+{% block content %}
+
+<nav class="mb-3">
+    <a href="{% url 'pengguna:pengguna_list' %}" class="text-decoration-none fw-semibold text-primary">Manajemen Pengguna</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">Detail Pengguna</span>
+</nav>
+
+<div class="d-flex justify-content-center">
+    <div class="card border-0 shadow-sm w-100 p-4" style="max-width: 600px;">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                 style="width:56px;height:56px;background-color: var(--navy); font-size:1.3rem;">
+                {{ profile.inisial }}
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0">{{ profile.nama_lengkap }}</h5>
+                <span class="text-muted small">{{ profile.id_pengguna }}</span>
+            </div>
+        </div>
+
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item d-flex justify-content-between px-0"><span class="text-muted">Username</span><span class="fw-semibold">{{ profile.user.username }}</span></li>
+            <li class="list-group-item d-flex justify-content-between px-0"><span class="text-muted">Jabatan</span><span class="fw-semibold">{{ profile.jabatan|default:"-" }}</span></li>
+            <li class="list-group-item d-flex justify-content-between px-0"><span class="text-muted">Unit Kerja</span><span class="fw-semibold">{{ profile.unit_kerja|default:"-" }}</span></li>
+            <li class="list-group-item d-flex justify-content-between px-0"><span class="text-muted">Role</span><span class="fw-semibold">{{ profile.get_role_display }}</span></li>
+            <li class="list-group-item d-flex justify-content-between px-0"><span class="text-muted">Status</span><span class="fw-semibold">{{ profile.get_status_display }}</span></li>
+            <li class="list-group-item d-flex justify-content-between px-0"><span class="text-muted">Terakhir Aktif</span><span class="fw-semibold">{{ profile.user.last_login|date:"d M Y H:i"|default:"Belum pernah login" }}</span></li>
+        </ul>
+
+        <a href="{% url 'pengguna:pengguna_list' %}" class="btn btn-light border">Kembali</a>
+    </div>
+</div>
+
+{% endblock %}
