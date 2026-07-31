@@ -37,3 +37,13 @@ class Profile(models.Model):
     @property
     def inisial(self):
         return self.nama_lengkap[:1].upper() if self.nama_lengkap else "?"
+
+    HAK_AKSES_MAP = {
+        'admin': ['Dashboard', 'Manajemen Aset', 'Persuratan', 'Permintaan ATK', 'Pengaturan', 'Laporan'],
+        'manager': ['Dashboard', 'Manajemen Aset', 'Persuratan', 'Permintaan ATK', 'Laporan'],
+        'operator': ['Dashboard', 'Manajemen Aset', 'Persuratan', 'Permintaan ATK'],
+    }
+
+    @property
+    def hak_akses(self):
+        return self.HAK_AKSES_MAP.get(self.role, [])
