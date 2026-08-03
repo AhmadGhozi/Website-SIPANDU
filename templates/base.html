@@ -213,6 +213,11 @@
             background-color: var(--navy);
             color: #fff;
         }
+
+        .custom-select-menu.scrollable-5 {
+            max-height: 190px;
+            overflow-y: auto;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -288,19 +293,14 @@
                 <div class="d-flex align-items-center gap-2">
                     <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center fw-bold"
                         style="width:34px;height:34px;">
-                        {% if request.user.is_authenticated %}{{request.user.get_full_name|default:request.user.username|slice:":1"|upper }}{% else %}U{% endif%}
+                        {% if request.user.is_authenticated%}{{request.user.get_full_name|default:request.user.username|slice:":1"|upper }}{% else %}U{%endif%}
                     </div>
                     <div>
                         <div class="small fw-semibold">
-                            {% if request.user.is_authenticated %}{{
-                            request.user.get_full_name|default:request.user.username }}{% else %}Tamu{% endif %}
+                            {% if request.user.is_authenticated%}{{request.user.get_full_name|default:request.user.username }}{% else %}Tamu{% endif %}
                         </div>
                         <div class="text-white-50" style="font-size:.7rem;">
-                            {% if request.user.is_authenticated and request.user.profile %}
-                            {{ request.user.profile.get_role_display }}
-                            {% else %}
-                            Pengguna
-                            {% endif %}
+                            {% if request.user.is_authenticated and request.user.profile %}{{request.user.profile.get_role_display }}{% else %}Pengguna{% endif %}
                         </div>
                     </div>
                 </div>
@@ -337,7 +337,7 @@
 
                     <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
                         style="width:38px;height:38px;background-color:var(--navy);">
-                        {% if request.user.is_authenticated %}{{request.user.get_full_name|default:request.user.username|slice:":1"|upper }}{% else %}U{% endif%}
+                        {% if request.user.is_authenticated%}{{request.user.get_full_name|default:request.user.username|slice:":1"|upper }}{% else %}U{%endif%}
                     </div>
                 </div>
             </header>
@@ -357,16 +357,20 @@
 
         document.querySelectorAll('.custom-select-wrap').forEach(function (wrapper) {
             const select = document.getElementById(wrapper.dataset.target);
+            if (!select) return;   // skip kalau select-nya tidak ketemu
+            
             const toggle = wrapper.querySelector('.custom-select-toggle');
             const label = wrapper.querySelector('.custom-select-label');
             const menu = wrapper.querySelector('.custom-select-menu');
             const options = wrapper.querySelectorAll('.custom-select-option');
 
-            label.textContent = select.options[select.selectedIndex].text;
+            const selectedOption = select.options[select.selectedIndex];
+            label.textContent = selectedOption ? selectedOption.text : (label.textContent || 'Pilih');
+            
             options.forEach(function (opt) {
                 if (opt.dataset.value === select.value) opt.classList.add('active');
             });
-
+            
             toggle.addEventListener('click', function (e) {
                 e.stopPropagation();
                 document.querySelectorAll('.custom-select-menu.show').forEach(function (m) {
@@ -374,7 +378,7 @@
                 });
                 menu.classList.toggle('show');
             });
-
+            
             options.forEach(function (opt) {
                 opt.addEventListener('click', function () {
                     select.value = opt.dataset.value;

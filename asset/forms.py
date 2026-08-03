@@ -13,7 +13,7 @@ class AssetForm(forms.ModelForm):
             'jumlah': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_jumlah'}),
             'harga_satuan': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_harga_satuan'}),
             'kondisi': forms.Select(attrs={'class': 'd-none'}),
-            'lokasi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Ruang TU'}),
+            'lokasi': forms.Select(attrs={'class': 'd-none'}),
             'pengguna': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama pemegang saat ini'}),
             'keterangan': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Catatan tambahan (opsional)'}),
             }
