@@ -12,9 +12,9 @@ class AssetForm(forms.ModelForm):
             'merk_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Dell / Latitude 5520'}),
             'jumlah': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_jumlah'}),
             'harga_satuan': forms.NumberInput(attrs={'class': 'form-control', 'id': 'id_harga_satuan'}),
-            'kondisi': forms.Select(attrs={'class': 'form-select'}),
+            'kondisi': forms.Select(attrs={'class': 'd-none'}),
             'lokasi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Ruang TU'}),
-            'pengguna': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama pemegang saat ini (opsional)'}),
+            'pengguna': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama pemegang saat ini'}),
             'keterangan': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Catatan tambahan (opsional)'}),
             }
 

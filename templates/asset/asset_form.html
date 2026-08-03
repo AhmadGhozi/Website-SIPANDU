@@ -19,11 +19,11 @@
             <div class="d-flex align-items-center gap-3">
                 <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0
                             {% if is_edit %}bg-warning{% else %}bg-primary{% endif %}"
-                     style="width: 38px; height: 38px;">
+                    style="width: 38px; height: 38px;">
                     {% if is_edit %}
-                        <i class="bi bi-pencil-fill text-white"></i>
+                    <i class="bi bi-pencil-fill text-white"></i>
                     {% else %}
-                        <i class="bi bi-plus-lg text-white"></i>
+                    <i class="bi bi-plus-lg text-white"></i>
                     {% endif %}
                 </div>
                 <div>
@@ -46,7 +46,8 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Nama Barang</label>
-                            <p class="text-muted small mb-1" style="font-size: .75rem;">Contoh: Mobil/Motor/Kursi/Meja</p>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Contoh: Mobil/Motor/Kursi/Meja
+                            </p>
                             {{ form.nama_barang }}
                         </div>
                     </div>
@@ -54,12 +55,25 @@
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Merk / Type</label>
-                            <p class="text-muted small mb-1" style="font-size: .75rem;">Pisahkan merk dan tipe dengan tanda /</p>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Pisahkan merk dan tipe dengan
+                                tanda /</p>
                             {{ form.merk_type }}
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Kondisi</label>
-                            <p class="text-muted small mb-1" style="font-size: .75rem;">Baik/Kurang Baik/Buruk</p>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Baik/Kurang Baik/Rusak</p>
+
+                            <div class="custom-select-wrap" data-target="id_kondisi">
+                                <div class="custom-select-toggle form-control">
+                                    <span class="custom-select-label">Baik</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </div>
+                                <div class="custom-select-menu">
+                                    <div class="custom-select-option" data-value="baik">Baik</div>
+                                    <div class="custom-select-option" data-value="kurang_baik">Kurang Baik</div>
+                                    <div class="custom-select-option" data-value="rusak">Rusak</div>
+                                </div>
+                            </div>
                             {{ form.kondisi }}
                         </div>
                     </div>
@@ -74,7 +88,7 @@
                             {{ form.pengguna }}
                         </div>
                     </div>
-                    
+
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Jumlah (Unit)</label>
@@ -86,14 +100,15 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label fw-semibold mb-1">Keterangan</label>
-                            <p class="text-muted small mb-1" style="font-size: .75rem;">Opsional, catatan tambahan tentang asset ini</p>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Opsional, catatan tambahan
+                                tentang asset ini</p>
                             {{ form.keterangan }}
                         </div>
                     </div>
 
                     <!-- Total Nilai Preview -->
                     <div class="rounded p-2 mb-3 d-flex justify-content-between align-items-center"
-                         style="background-color: #FEF3E2;">
+                        style="background-color: #FEF3E2;">
                         <div>
                             <div class="fw-semibold small" style="color:#B45309;">Total Nilai Asset</div>
                             <div class="small" style="color:#B45309; font-size: .75rem;">
@@ -108,11 +123,12 @@
                 <!-- Tombol ini akan otomatis terdorong ke bawah card -->
                 <div class="d-flex justify-content-end gap-2 mt-auto">
                     <a href="{% url 'asset:asset_list' %}" class="btn btn-light border px-4">Batal</a>
-                    <button type="submit" class="btn px-4 text-white {% if is_edit %}btn-warning{% else %}btn-primary{% endif %}">
+                    <button type="submit"
+                        class="btn px-4 text-white {% if is_edit %}btn-warning{% else %}btn-primary{% endif %}">
                         {% if is_edit %}
-                            <i class="bi bi-check-lg me-1"></i> Simpan Perubahan
+                        <i class="bi bi-check-lg me-1"></i> Simpan Perubahan
                         {% else %}
-                            <i class="bi bi-plus-lg me-1"></i> Simpan Asset
+                        <i class="bi bi-plus-lg me-1"></i> Simpan Asset
                         {% endif %}
                     </button>
                 </div>
