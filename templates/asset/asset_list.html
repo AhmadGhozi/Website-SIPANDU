@@ -79,9 +79,13 @@
                         {% endif %}
                     </td>
                     <td class="text-end pe-3">
+                        <a href="{% url 'asset:asset_detail' asset.pk %}" class="btn btn-sm btn-light border" title="Lihat Detail">
+                            <i class="bi bi-eye"></i>
+                        </a>
                         <a href="{% url 'asset:asset_update' asset.pk %}" class="btn btn-sm btn-light border">
                             <i class="bi bi-pencil"></i>
                         </a>
+
                         <button type="button" class="btn btn-sm btn-outline-danger"
                                 data-bs-toggle="modal" data-bs-target="#modalHapus"
                                 data-nama="{{ asset.nama_barang }}" data-kode="{{ asset.kode_barang }}"

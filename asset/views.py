@@ -5,6 +5,10 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Asset
 from .forms import AssetForm
+import qrcode
+import io
+from django.http import HttpResponse
+from django.urls import reverse
 
 @login_required
 def asset_list(request):
@@ -74,3 +78,23 @@ def asset_delete(request, pk):
         return redirect('asset:asset_list')
 
     return render(request, 'asset/asset_confirm_delete.html', {'asset': asset})
+
+def asset_detail(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+    return render(request, 'asset/asset_detail.html', {'asset': asset})
+
+
+def asset_qrcode(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+    detail_url = request.build_absolute_uri(
+        reverse('asset:asset_detail', args=[asset.pk])
+    )
+
+    qr = qrcode.make(detail_url)
+    buffer = io.BytesIO()
+    qr.save(buffer, format='PNG')
+    buffer.seek(0)
+
+    response = HttpResponse(buffer, content_type='image/png')
+    response['Content-Disposition'] = f'inline; filename="qr-{asset.kode_barang}.png"'
+    return response
