@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>/edit/', views.asset_update, name='asset_update'),
     path('<int:pk>/hapus/', views.asset_delete, name='asset_delete'),
     path('<int:pk>/qrcode/', views.asset_qrcode, name='asset_qrcode'),
+    path('qrcode-massal/', views.asset_qrcode_massal, name='asset_qrcode_massal'),
 ]
