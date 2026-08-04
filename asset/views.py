@@ -84,16 +84,21 @@ def asset_delete(request, pk):
 
     return render(request, 'asset/asset_confirm_delete.html', {'asset': asset})
 
+@login_required
 def asset_detail(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     return render(request, 'asset/asset_detail.html', {'asset': asset})
+
+def asset_public_detail(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+    return render(request, 'asset/asset_public_detail.html', {'asset': asset})
 
 @login_required
 def asset_qrcode(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     detail_url = request.build_absolute_uri(
-        reverse('asset:asset_detail', args=[asset.pk])
-    )
+        reverse('asset:asset_public_detail', args=[asset.pk])
+        )
 
     qr = qrcode.make(detail_url)
     buffer = io.BytesIO()
@@ -130,7 +135,7 @@ def asset_qrcode_massal(request):
     col_count = 0
 
     for asset in assets:
-        detail_url = request.build_absolute_uri(reverse('asset:asset_detail', args=[asset.pk]))
+        detail_url = request.build_absolute_uri(reverse('asset:asset_public_detail', args=[asset.pk]))
         qr_img = qrcode.make(detail_url)
         qr_buffer = io.BytesIO()
         qr_img.save(qr_buffer, format='PNG')
