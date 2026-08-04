@@ -12,77 +12,170 @@
 </nav>
 
 <div class="row g-3">
+    <!-- KIRI: Cover + QR Code -->
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card border-0 shadow-sm overflow-hidden mb-3">
+            <div style="height: 90px; background: linear-gradient(135deg, #1B2A52, #2F5FD6); position: relative; border-top-left-radius: 14px; border-top-right-radius: 14px;">
+                <i class="bi bi-box-seam-fill text-white" style="position:absolute; right:16px; top:16px; font-size:1.8rem; opacity:.35;"></i>
+            </div>
+            <div class="card-body pt-0">
+                <div class="d-flex justify-content-between align-items-end" style="margin-top: -32px;">
+                    <div class="rounded d-flex align-items-center justify-content-center text-white border border-4 border-white"
+                    style="width:56px;height:56px;background-color: var(--navy); font-size:1.3rem; position: relative; z-index: 2;">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+                    {% if asset.kondisi == 'baik' %}
+                        <span class="badge bg-success-subtle text-success border mb-2">Baik</span>
+                    {% elif asset.kondisi == 'kurang_baik' %}
+                        <span class="badge bg-warning-subtle text-warning border mb-2">Kurang Baik</span>
+                    {% else %}
+                        <span class="badge bg-danger-subtle text-danger border mb-2">Rusak</span>
+                    {% endif %}
+                </div>
+
+                <div class="text-muted small mt-3">{{ asset.kode_barang }}</div>
+                <h5 class="fw-bold mb-0">{{ asset.nama_barang }}</h5>
+                <p class="text-muted small mb-0">{{ asset.merk_type }}</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
             <div class="card-body text-center">
-                <div class="fw-bold mb-3">QR Code Asset</div>
-                <img src="{% url 'asset:asset_qrcode' asset.pk %}" alt="QR Code" class="img-fluid mb-3" style="max-width: 220px;">
-                <p class="text-muted small">Scan untuk membuka detail asset ini</p>
-                <a href="{% url 'asset:asset_qrcode' asset.pk %}" download="qr-{{ asset.kode_barang }}.png" class="btn btn-outline-primary w-100">
-                    <i class="bi bi-download me-1"></i> Download QR Code
+                <div class="text-muted text-uppercase small fw-bold mb-3" style="font-size:.7rem;">Kode QR Asset</div>
+                <div class="border rounded p-2 d-inline-block mb-2">
+                    <img src="{% url 'asset:asset_qrcode' asset.pk %}" alt="QR Code" style="width: 180px; height: 180px;">
+                </div>
+                <div class="fw-bold">{{ asset.kode_barang }}</div>
+                <p class="text-muted small mb-3">Scan untuk verifikasi asset</p>
+                <a href="{% url 'asset:asset_qrcode' asset.pk %}" download="qr-{{ asset.kode_barang }}.png" class="btn btn-light border w-100">
+                    <i class="bi bi-download me-1"></i> Unduh QR Code
                 </a>
             </div>
         </div>
     </div>
 
+    <!-- KANAN: Stat cards + Info + Lokasi/Pengguna -->
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h5 class="fw-bold mb-0">{{ asset.nama_barang }}</h5>
-                        <span class="badge bg-success">{{ asset.kode_barang }}</span>
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Jumlah Unit</div>
+                        <div class="fs-4 fw-bold">{{ asset.jumlah }}</div>
+                        <div class="text-muted small">unit</div>
                     </div>
-                    {% if asset.kondisi == 'baik' %}
-                        <span class="badge bg-success">Baik</span>
-                    {% elif asset.kondisi == 'kurang_baik' %}
-                        <span class="badge bg-warning text-dark">Kurang Baik</span>
-                    {% else %}
-                        <span class="badge bg-danger">Rusak</span>
-                    {% endif %}
-                </div>
-
-                <div class="row g-0">
-                    <div class="col-md-6 py-2 border-bottom border-end pe-3">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Merk / Type</div>
-                        <div class="fw-semibold">{{ asset.merk_type }}</div>
-                    </div>
-                    <div class="col-md-6 py-2 border-bottom ps-md-3">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Jumlah</div>
-                        <div class="fw-semibold">{{ asset.jumlah }} unit</div>
-                    </div>
-
-                    <div class="col-md-6 py-2 border-bottom border-end pe-3">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Harga Satuan</div>
-                        <div class="fw-semibold">{{ asset.harga_satuan|floatformat:0 }}</div>
-                    </div>
-                    <div class="col-md-6 py-2 border-bottom ps-md-3">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Total Nilai</div>
-                        <div class="fw-semibold">{{ asset.total_nilai|floatformat:0 }}</div>
-                    </div>
-
-                    <div class="col-md-6 py-2 border-bottom border-end pe-3">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Lokasi</div>
-                        <div class="fw-semibold">{{ asset.lokasi|default:"-" }}</div>
-                    </div>
-                    <div class="col-md-6 py-2 border-bottom ps-md-3">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Pengguna / Pemegang</div>
-                        <div class="fw-semibold">{{ asset.pengguna|default:"-" }}</div>
-                    </div>
-
-                    <div class="col-12 py-2">
-                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Keterangan</div>
-                        <div class="fw-semibold">{{ asset.keterangan|default:"-" }}</div>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-3">
-                    <a href="{% url 'asset:asset_list' %}" class="btn btn-light border px-4">Kembali</a>
-                    <a href="{% url 'asset:asset_update' asset.pk %}" class="btn btn-warning text-white px-4">
-                        <i class="bi bi-pencil-fill me-1"></i> Edit Asset
-                    </a>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Harga Satuan</div>
+                        <div class="fs-5 fw-bold">Rp {{ asset.harga_satuan|floatformat:0 }}</div>
+                        <div class="text-muted small">per unit</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Total Nilai</div>
+                        <div class="fs-5 fw-bold text-success">Rp {{ asset.total_nilai|floatformat:0 }}</div>
+                        <div class="text-muted small">nilai asset</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <div class="fw-bold mb-2">Informasi Detail Asset</div>
+
+                <div class="d-flex align-items-center gap-3 py-3 border-bottom">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-box-seam text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Kode Barang</div>
+                    <div class="ms-auto fw-bold">{{ asset.kode_barang }}</div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 py-3 border-bottom">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-file-earmark-text text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Nama Barang</div>
+                    <div class="ms-auto fw-bold">{{ asset.nama_barang }}</div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 py-3 border-bottom">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-box-seam text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Merk / Type</div>
+                    <div class="ms-auto fw-bold">{{ asset.merk_type }}</div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 py-3">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-card-text text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Keterangan</div>
+                    <div class="ms-auto fw-bold text-end" style="max-width: 60%;">{{ asset.keterangan|default:"-" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="rounded d-flex align-items-center justify-content-center" style="width:32px;height:32px;background-color:#EAF1FF; color:#2F5FD6;">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <span class="fw-bold">Lokasi Asset</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded d-flex align-items-center justify-content-center" style="width:36px;height:36px;background-color:#EAF1FF; color:#2F5FD6;">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ asset.lokasi|default:"-" }}</div>
+                                <div class="text-muted small">Lokasi penyimpanan / penempatan asset</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="rounded d-flex align-items-center justify-content-center" style="width:32px;height:32px;background-color:#EAFBF1; color:#15803D;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <span class="fw-bold">Pengguna / PIC</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                                 style="width:36px;height:36px;background-color: var(--navy); font-size:.8rem;">
+                                {{ asset.pengguna|default:"-"|slice:":2"|upper }}
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ asset.pengguna|default:"-" }}</div>
+                                <div class="text-muted small">Penanggung jawab asset</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'asset:asset_list' %}" class="btn btn-light border px-4">Kembali</a>
+            <a href="{% url 'asset:asset_update' asset.pk %}" class="btn btn-warning text-white px-4">
+                <i class="bi bi-pencil-fill me-1"></i> Edit Asset
+            </a>
         </div>
     </div>
 </div>
