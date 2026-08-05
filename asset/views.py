@@ -14,6 +14,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas as pdf_canvas
+from dashboard.models import ActivityLog
 
 @login_required
 def asset_list(request):
@@ -39,7 +40,12 @@ def asset_create(request):
     if request.method == 'POST':
         form = AssetForm(request.POST)
         if form.is_valid():
-            form.save()
+            asset = form.save()
+            ActivityLog.objects.create(
+                aksi='created',
+                deskripsi=f"{asset.nama_barang} ({asset.kode_barang})",
+                user=request.user,
+            )
             messages.success(request, 'Asset baru berhasil ditambahkan.')
             return redirect('asset:asset_list')
     else:
@@ -59,7 +65,12 @@ def asset_update(request, pk):
     if request.method == 'POST':
         form = AssetForm(request.POST, instance=asset)
         if form.is_valid():
-            form.save()
+            asset = form.save()
+            ActivityLog.objects.create(
+                aksi='updated',
+                deskripsi=f"{asset.nama_barang} ({asset.kode_barang})",
+                user=request.user,
+            )
             messages.success(request, 'Data asset berhasil diperbarui.')
             return redirect('asset:asset_list')
     else:
@@ -78,6 +89,11 @@ def asset_update(request, pk):
 def asset_delete(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     if request.method == 'POST':
+        ActivityLog.objects.create(
+            aksi='deleted',
+            deskripsi=f"{asset.nama_barang} ({asset.kode_barang})",
+            user=request.user,
+        )
         asset.delete()
         messages.success(request, 'Asset berhasil dihapus.')
         return redirect('asset:asset_list')
