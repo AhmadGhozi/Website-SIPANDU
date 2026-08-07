@@ -9,7 +9,7 @@ class BarangATKForm(forms.ModelForm):
         widgets = {
             'kode_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ATK-001'}),
             'nama_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Kertas A4'}),
-            'satuan': forms.Select(attrs={'class': 'form-select'}),
+            'satuan': forms.Select(attrs={'class': 'd-none'}),
             'stok': forms.NumberInput(attrs={'class': 'form-control'}),
             'keterangan': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Catatan tambahan (opsional)'}),
         }

@@ -51,6 +51,21 @@
                 <div class="row g-2 mb-2">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold mb-1">Satuan</label>
+                        <div class="custom-select-wrap" data-target="id_satuan">
+                            <div class="custom-select-toggle form-control">
+                                <span class="custom-select-label">Pcs</span>
+                                <i class="bi bi-chevron-down small"></i>
+                            </div>
+                            <div class="custom-select-menu">
+                                <div class="custom-select-option" data-value="pcs">Pcs</div>
+                                <div class="custom-select-option" data-value="rim">Rim</div>
+                                <div class="custom-select-option" data-value="box">Box</div>
+                                <div class="custom-select-option" data-value="botol">Botol</div>
+                                <div class="custom-select-option" data-value="lusin">Lusin</div>
+                                <div class="custom-select-option" data-value="pak">Pak</div>
+                                <div class="custom-select-option" data-value="unit">Unit</div>
+                            </div>
+                        </div>
                         {{ form.satuan }}
                     </div>
                     <div class="col-md-6">
