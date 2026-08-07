@@ -12,11 +12,19 @@ class Profile(models.Model):
         ('aktif', 'Aktif'),
         ('nonaktif', 'Nonaktif'),
     ]
+    UNIT_KERJA_CHOICES = [
+        ('Sekretariat', 'Sekretariat'),
+        ('Sub Bagian Perencanaan Program & Keuangan', 'Sub Bagian Perencanaan Program & Keuangan'),
+        ('Sub Bagian Umum dan Kepegawaian', 'Sub Bagian Umum dan Kepegawaian'),
+        ('Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan', 'Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan'),
+        ('Bidang Keluarga Berencana', 'Bidang Keluarga Berencana'),
+        ('Bidang Ketahanan dan Kesejahteraan Keluarga', 'Bidang Ketahanan dan Kesejahteraan Keluarga'),
+    ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     nama_lengkap = models.CharField(max_length=150)
     jabatan = models.CharField(max_length=150, blank=True)
-    unit_kerja = models.CharField(max_length=150, blank=True)
+    unit_kerja = models.CharField(max_length=100, choices=UNIT_KERJA_CHOICES, blank=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default='operator')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='aktif')
 

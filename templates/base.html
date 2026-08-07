@@ -274,7 +274,9 @@
                     </a>
                     <div class="collapse submenu" id="menuPengaturan">
                         <ul class="nav flex-column">
-                            <li class="nav-item"><a href="#" class="nav-link">Data Barang</a></li>
+                            <li class="nav-item">
+                                <a href="{% url 'databarang:barang_list' %}" class="nav-link">Data Barang</a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{% url 'pengguna:pengguna_list' %}" class="nav-link">Pengguna</a>
                             </li>

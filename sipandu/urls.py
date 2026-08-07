@@ -10,4 +10,5 @@ urlpatterns = [
     path('asset/', include('asset.urls')),
     path('', dashboard, name='dashboard'),
     path('pengguna/', include('pengguna.urls')),
+    path('databarang/', include('databarang.urls')),
 ]

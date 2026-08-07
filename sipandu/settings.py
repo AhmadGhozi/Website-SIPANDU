@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'dashboard',
     'asset',
     'pengguna',
+    'databarang',
 ]
 
 MIDDLEWARE = [

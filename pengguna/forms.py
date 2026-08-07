@@ -19,7 +19,7 @@ class PenggunaForm(forms.ModelForm):
         widgets = {
             'nama_lengkap': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama lengkap beserta gelar'}),
             'jabatan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Kepala Biro Umum'}),
-            'unit_kerja': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Biro Umum'}),
+            'unit_kerja': forms.Select(attrs={'class': 'd-none'}),
             'role': forms.Select(attrs={'class': 'd-none'}),
             'status': forms.Select(attrs={'class': 'd-none'}),
         }

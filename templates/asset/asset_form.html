@@ -40,12 +40,12 @@
                 <div>
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Kode Barang</label>
+                            <label class="form-label fw-semibold mb-1">Kode Barang *</label>
                             <p class="text-muted small mb-1" style="font-size: .75rem;">Contoh: 1.1.1.11.111.111.111</p>
                             {{ form.kode_barang }}
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Nama Barang</label>
+                            <label class="form-label fw-semibold mb-1">Nama Barang *</label>
                             <p class="text-muted small mb-1" style="font-size: .75rem;">Contoh: Mobil/Motor/Kursi/Meja
                             </p>
                             {{ form.nama_barang }}
@@ -54,13 +54,13 @@
 
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Merk / Type</label>
+                            <label class="form-label fw-semibold mb-1">Merk / Type *</label>
                             <p class="text-muted small mb-1" style="font-size: .75rem;">Pisahkan merk dan tipe dengan
                                 tanda /</p>
                             {{ form.merk_type }}
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Kondisi</label>
+                            <label class="form-label fw-semibold mb-1">Kondisi *</label>
                             <p class="text-muted small mb-1" style="font-size: .75rem;">Baik/Kurang Baik/Rusak</p>
 
                             <div class="custom-select-wrap" data-target="id_kondisi">
@@ -80,7 +80,7 @@
 
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Lokasi</label>
+                            <label class="form-label fw-semibold mb-1">Lokasi *</label>
                             <div class="custom-select-wrap" data-target="id_lokasi">
                                 <div class="custom-select-toggle form-control">
                                     <span class="custom-select-label">Pilih lokasi</span>
@@ -115,11 +115,11 @@
 
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Jumlah (Unit)</label>
+                            <label class="form-label fw-semibold mb-1">Jumlah (Unit) *</label>
                             {{ form.jumlah }}
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-1">Harga Satuan (Rp)</label>
+                            <label class="form-label fw-semibold mb-1">Harga Satuan (Rp) *</label>
                             {{ form.harga_satuan }}
                         </div>
                         <div class="mb-2">
