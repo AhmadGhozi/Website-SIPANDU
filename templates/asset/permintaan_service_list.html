@@ -5,11 +5,16 @@
 
 {% block content %}
 
-<div class="mb-4">
-    <h2 class="fw-bold">Permintaan Service / Pemeliharaan</h2>
-    <p class="text-muted mb-0">
-        {% if is_approver %}Tinjau dan proses permintaan yang masuk{% else %}Daftar semua permintaan service yang diajukan{% endif %}
-    </p>
+<div class="mb-4 d-flex justify-content-between align-items-start">
+    <div>
+        <h2 class="fw-bold">Permintaan Service / Pemeliharaan</h2>
+        <p class="text-muted mb-0">
+            {% if is_approver %}Tinjau dan proses permintaan yang masuk{% else %}Daftar semua permintaan service yang diajukan{% endif %}
+        </p>
+    </div>
+    <a href="{% url 'asset:permintaan_service_create' %}" class="btn btn-primary d-flex align-items-center gap-2">
+        <i class="bi bi-plus-lg"></i> Ajukan Pemeliharaan
+    </a>
 </div>
 
 <div class="row g-3 mb-4">

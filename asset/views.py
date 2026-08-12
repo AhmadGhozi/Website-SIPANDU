@@ -217,21 +217,24 @@ def asset_service_list(request, pk):
     })
 
 @login_required
-def permintaan_service_create(request, pk):
-    asset = get_object_or_404(Asset, pk=pk)
+def permintaan_service_create(request):
     if request.method == 'POST':
         form = PermintaanServiceForm(request.POST)
         if form.is_valid():
-            permintaan = form.save(commit=False)
-            permintaan.asset = asset
-            permintaan.diajukan_oleh = request.user
-            permintaan.save()
-            messages.success(request, 'Permintaan service/pemeliharaan berhasil diajukan.')
-            return redirect('asset:asset_service_list', pk=asset.pk)
+            asset = form.cleaned_data['asset']
+            permintaan = PermintaanService.objects.create(
+                asset=asset,
+                jenis_service=form.cleaned_data['jenis_service'],
+                keterangan=form.cleaned_data['keterangan'],
+                biaya_estimasi=form.cleaned_data['biaya_estimasi'],
+                diajukan_oleh=request.user,
+            )
+            messages.success(request, f'Permintaan service untuk "{asset.nama_barang}" berhasil diajukan.')
+            return redirect('asset:permintaan_service_list')
     else:
         form = PermintaanServiceForm()
 
-    return render(request, 'asset/permintaan_service_form.html', {'asset': asset, 'form': form})
+    return render(request, 'asset/permintaan_service_form.html', {'form': form})
 
 
 @login_required

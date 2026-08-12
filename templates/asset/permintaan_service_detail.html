@@ -13,54 +13,103 @@
 
 <div class="d-flex justify-content-center">
     <div class="card border-0 shadow-sm w-100" style="max-width: 700px;">
+
+        <!-- Header -->
+        <div class="card-body border-bottom p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0" 
+                         style="width:42px;height:42px;background-color: var(--navy);">
+                        <i class="bi bi-tools text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">{{ permintaan.jenis_service }}</h5>
+                        <span class="text-muted small">
+                            {{ permintaan.asset.nama_barang }} ({{ permintaan.asset.kode_barang }})
+                        </span>
+                    </div>
+                </div>
+                <span class="badge {{ permintaan.badge_class }} px-3 py-2">{{ permintaan.get_status_display }}</span>
+            </div>
+        </div>
+
         <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h5 class="fw-bold mb-1">{{ permintaan.jenis_service }}</h5>
-                    <span class="text-muted small">{{ permintaan.asset.nama_barang }} ({{ permintaan.asset.kode_barang }})</span>
-                </div>
-                <span class="badge {{ permintaan.badge_class }}">{{ permintaan.get_status_display }}</span>
-            </div>
-
+            <!-- Info grid -->
             <div class="row g-0 mb-3">
-                <div class="col-6 py-2 border-bottom border-end pe-3">
-                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Diajukan Oleh</div>
-                    <div class="fw-semibold">{{ permintaan.diajukan_oleh.username|default:"-" }}</div>
+                <div class="col-md-6 d-flex gap-2 py-3 border-bottom border-end pe-3">
+                    <i class="bi bi-person-fill text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Diajukan Oleh</div>
+                        <div class="fw-semibold">{{ permintaan.diajukan_oleh.username|default:"-" }}</div>
+                    </div>
                 </div>
-                <div class="col-6 py-2 border-bottom ps-3">
-                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tanggal Diajukan</div>
-                    <div class="fw-semibold">{{ permintaan.diajukan_pada|date:"d M Y, H:i" }}</div>
+                <div class="col-md-6 d-flex gap-2 py-3 border-bottom ps-md-3">
+                    <i class="bi bi-calendar-event text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tanggal Diajukan</div>
+                        <div class="fw-semibold">{{ permintaan.diajukan_pada|date:"d M Y, H:i" }}</div>
+                    </div>
                 </div>
-                <div class="col-6 py-2 border-bottom border-end pe-3">
-                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Estimasi Biaya</div>
-                    <div class="fw-semibold">{% if permintaan.biaya_estimasi %}Rp {{ permintaan.biaya_estimasi|floatformat:0 }}{% else %}-{% endif %}</div>
+
+                <div class="col-md-6 d-flex gap-2 py-3 {% if permintaan.keterangan %}border-bottom{% endif %} border-end pe-3">
+                    <i class="bi bi-cash-coin text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Estimasi Biaya</div>
+                        <div class="fw-semibold">
+                            {% if permintaan.biaya_estimasi %}Rp {{ permintaan.biaya_estimasi|floatformat:0 }}{% else %}-{% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12 py-2">
-                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Keterangan</div>
-                    <div class="fw-semibold">{{ permintaan.keterangan|default:"-" }}</div>
+                <div class="col-md-6 d-flex gap-2 py-3 {% if permintaan.keterangan %}border-bottom{% endif %} ps-md-3">
+                    <i class="bi bi-upc-scan text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">No. Register</div>
+                        <div class="fw-semibold">{{ permintaan.asset.register|default:"-" }}</div>
+                    </div>
                 </div>
+
+                {% if permintaan.keterangan %}
+                <div class="col-12 d-flex gap-2 py-3">
+                    <i class="bi bi-card-text text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Keterangan</div>
+                        <div class="fw-semibold">{{ permintaan.keterangan }}</div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
+            <!-- Status proses -->
             {% if permintaan.status != 'diajukan' %}
-            <div class="rounded p-3 mb-3" style="background-color: #F4F6FB;">
-                <div class="small text-muted mb-1">Diproses oleh <strong>{{ permintaan.diproses_oleh.username }}</strong> pada {{ permintaan.diproses_pada|date:"d M Y, H:i" }}</div>
-                {% if permintaan.catatan_approval %}
-                    <div class="small">Catatan: {{ permintaan.catatan_approval }}</div>
-                {% endif %}
+            <div class="rounded p-3 mb-3 d-flex align-items-start gap-2" style="background-color: #F4F6FB;">
+                <i class="bi bi-info-circle-fill text-muted mt-1"></i>
+                <div>
+                    <div class="small">
+                        Diproses oleh <strong>{{ permintaan.diproses_oleh.username }}</strong>
+                        pada {{ permintaan.diproses_pada|date:"d M Y, H:i" }}
+                    </div>
+                    {% if permintaan.catatan_approval %}
+                        <div class="small text-muted mt-1">Catatan: {{ permintaan.catatan_approval }}</div>
+                    {% endif %}
+                </div>
             </div>
             {% endif %}
 
+            <!-- Form approval -->
             {% if permintaan.status == 'diajukan' and is_approver %}
             <hr>
+            <div class="fw-bold mb-3">Proses Permintaan</div>
             <form method="post">
                 {% csrf_token %}
-                <div class="mb-2">
-                    <label class="form-label fw-semibold mb-1">Tanggal Pelaksanaan</label>
-                    {{ form.tanggal_pelaksanaan }}
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-semibold mb-1">Biaya Aktual (Rp)</label>
-                    {{ form.biaya_aktual }}
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">Tanggal Pelaksanaan</label>
+                        {{ form.tanggal_pelaksanaan }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">Biaya Aktual (Rp)</label>
+                        {{ form.biaya_aktual }}
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-semibold mb-1">Catatan</label>
@@ -76,13 +125,16 @@
                 </div>
             </form>
             {% elif permintaan.status == 'diajukan' %}
-            <div class="alert alert-warning small mb-0">
-                Menunggu approval dari Kasubag Umum.
+            <div class="rounded p-3 d-flex align-items-center gap-2" style="background-color: #FEF3E2;">
+                <i class="bi bi-hourglass-split" style="color:#B45309;"></i>
+                <span class="small" style="color:#B45309;">Menunggu approval dari Kasubag Umum.</span>
             </div>
             {% endif %}
 
-            <div class="mt-3">
-                <a href="{% url 'asset:permintaan_service_list' %}" class="btn btn-light border">Kembali</a>
+            <div class="mt-4">
+                <a href="{% url 'asset:permintaan_service_list' %}" class="btn btn-light border px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Kembali
+                </a>
             </div>
         </div>
     </div>

@@ -35,15 +35,38 @@ class AssetForm(forms.ModelForm):
         return kode_barang
 
 
-class PermintaanServiceForm(forms.ModelForm):
-    class Meta:
-        model = PermintaanService
-        fields = ['jenis_service', 'keterangan', 'biaya_estimasi']
-        widgets = {
-            'jenis_service': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Ganti Oli, Service AC, Perbaikan Layar'}),
-            'keterangan': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Jelaskan kondisi/alasan pengajuan'}),
-            'biaya_estimasi': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Opsional'}),
-        }
+class PermintaanServiceForm(forms.Form):
+    kode_barang = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: 1.3.2.05.001.004.001'})
+    )
+    register = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: 000002'})
+    )
+    jenis_service = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Ganti Oli, Service AC, Perbaikan Layar'})
+    )
+    keterangan = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Jelaskan kondisi/alasan pengajuan'})
+    )
+    biaya_estimasi = forms.DecimalField(
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Opsional'})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        kode_barang = cleaned_data.get('kode_barang')
+        register = cleaned_data.get('register')
+
+        if kode_barang and register:
+            try:
+                asset = Asset.objects.get(kode_barang=kode_barang, register=register)
+                cleaned_data['asset'] = asset
+            except Asset.DoesNotExist:
+                raise forms.ValidationError('Asset dengan Kode Barang dan No. Register tersebut tidak ditemukan. Periksa kembali data yang dimasukkan.')
+
+        return cleaned_data
 
 class ApprovalServiceForm(forms.Form):
     tanggal_pelaksanaan = forms.DateField(
