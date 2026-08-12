@@ -111,11 +111,13 @@
                     <td class="text-muted">{{ profile.unit_kerja|default:"-" }}</td>
                     <td>
                         {% if profile.role == 'admin' %}
-                            <span class="badge" style="background-color:#F3E8FF; color:#7C3AED;">Admin</span>
+                        <span class="badge" style="background-color:#F3E8FF; color:#7C3AED;">Admin</span>
                         {% elif profile.role == 'manager' %}
-                            <span class="badge" style="background-color:#DBEAFE; color:#2563EB;">Manager</span>
+                        <span class="badge" style="background-color:#DBEAFE; color:#2563EB;">Manager</span>
+                        {% elif profile.role == 'kasubag_umum' %}
+                        <span class="badge" style="background-color:#FEF3C7; color:#B45309;">Kasubag Umum</span>
                         {% else %}
-                            <span class="badge bg-light text-dark border">Operator</span>
+                        <span class="badge bg-light text-dark border">Operator</span>
                         {% endif %}
                     </td>
                     <td>

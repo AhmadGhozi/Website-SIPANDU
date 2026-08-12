@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -15,6 +15,8 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas as pdf_canvas
 from dashboard.models import ActivityLog
+from .models import Asset, RiwayatService, PermintaanService
+from .forms import AssetForm, PermintaanServiceForm, ApprovalServiceForm
 
 @login_required
 def asset_list(request):
@@ -199,3 +201,96 @@ def asset_qrcode_massal(request):
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="qr-code-asset.pdf"'
     return response
+
+def is_kasubag_umum(user):
+    return hasattr(user, 'profile') and user.profile.role == 'kasubag_umum'
+
+
+@login_required
+def asset_service_list(request, pk):
+    """Riwayat service (read-only) untuk 1 asset tertentu."""
+    asset = get_object_or_404(Asset, pk=pk)
+    riwayat = asset.riwayat_service.all()
+    permintaan_list = asset.permintaan_service.all()
+    return render(request, 'asset/asset_service_list.html', {
+        'asset': asset, 'riwayat': riwayat, 'permintaan_list': permintaan_list,
+    })
+
+@login_required
+def permintaan_service_create(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+    if request.method == 'POST':
+        form = PermintaanServiceForm(request.POST)
+        if form.is_valid():
+            permintaan = form.save(commit=False)
+            permintaan.asset = asset
+            permintaan.diajukan_oleh = request.user
+            permintaan.save()
+            messages.success(request, 'Permintaan service/pemeliharaan berhasil diajukan.')
+            return redirect('asset:asset_service_list', pk=asset.pk)
+    else:
+        form = PermintaanServiceForm()
+
+    return render(request, 'asset/permintaan_service_form.html', {'asset': asset, 'form': form})
+
+
+@login_required
+def permintaan_service_list(request):
+    """Daftar semua permintaan service (untuk approval)."""
+    permintaan_list = PermintaanService.objects.select_related('asset', 'diajukan_oleh').all()
+    context = {
+        'permintaan_list': permintaan_list,
+        'is_approver': is_kasubag_umum(request.user),
+        'total_diajukan': permintaan_list.filter(status='diajukan').count(),
+        'total_disetujui': permintaan_list.filter(status='disetujui').count(),
+        'total_ditolak': permintaan_list.filter(status='ditolak').count(),
+    }
+    return render(request, 'asset/permintaan_service_list.html', context)
+
+
+@login_required
+def permintaan_service_detail(request, pk):
+    permintaan = get_object_or_404(PermintaanService, pk=pk)
+    is_approver = is_kasubag_umum(request.user)
+    form = ApprovalServiceForm()
+
+    if request.method == 'POST':
+        if not is_approver:
+            messages.error(request, 'Anda tidak memiliki akses untuk memproses permintaan ini.')
+            return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+
+        aksi = request.POST.get('aksi')
+
+        if aksi == 'tolak':
+            permintaan.status = 'ditolak'
+            permintaan.catatan_approval = request.POST.get('catatan_approval', '')
+            permintaan.diproses_oleh = request.user
+            permintaan.diproses_pada = timezone.now()
+            permintaan.save()
+            messages.success(request, 'Permintaan service ditolak.')
+            return redirect('asset:permintaan_service_list')
+
+        elif aksi == 'setuju':
+            form = ApprovalServiceForm(request.POST)
+            if form.is_valid():
+                permintaan.status = 'disetujui'
+                permintaan.catatan_approval = form.cleaned_data['catatan_approval']
+                permintaan.diproses_oleh = request.user
+                permintaan.diproses_pada = timezone.now()
+                permintaan.save()
+
+                RiwayatService.objects.create(
+                    asset=permintaan.asset,
+                    permintaan=permintaan,
+                    tanggal=form.cleaned_data['tanggal_pelaksanaan'],
+                    jenis_service=permintaan.jenis_service,
+                    keterangan=permintaan.keterangan,
+                    biaya=form.cleaned_data['biaya_aktual'] or permintaan.biaya_estimasi,
+                    dibuat_oleh=request.user,
+                )
+                messages.success(request, 'Permintaan service disetujui dan riwayat berhasil dicatat.')
+                return redirect('asset:permintaan_service_list')
+
+    return render(request, 'asset/permintaan_service_detail.html', {
+        'permintaan': permintaan, 'is_approver': is_approver, 'form': form,
+    })

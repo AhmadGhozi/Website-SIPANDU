@@ -7,6 +7,7 @@ class Profile(models.Model):
         ('admin', 'Admin'),
         ('manager', 'Manager'),
         ('operator', 'Operator'),
+        ('kasubag_umum', 'Kasubag Umum'),
     ]
     STATUS_CHOICES = [
         ('aktif', 'Aktif'),
@@ -50,6 +51,7 @@ class Profile(models.Model):
         'admin': ['Dashboard', 'Manajemen Aset', 'Persuratan', 'Permintaan ATK', 'Pengaturan', 'Laporan'],
         'manager': ['Dashboard', 'Manajemen Aset', 'Persuratan', 'Permintaan ATK', 'Laporan'],
         'operator': ['Dashboard', 'Manajemen Aset', 'Persuratan', 'Permintaan ATK'],
+        'kasubag_umum': ['Dashboard', 'Manajemen Aset', 'Approval Service/Pemeliharaan'],
     }
 
     @property

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Permintaan Service{% endblock %}
+{% block page_title %}Asset{% endblock %}
+
+{% block content %}
+
+<nav class="mb-3">
+    <a href="{% url 'asset:permintaan_service_list' %}" class="text-decoration-none fw-semibold text-primary">Permintaan Service</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">Detail</span>
+</nav>
+
+<div class="d-flex justify-content-center">
+    <div class="card border-0 shadow-sm w-100" style="max-width: 700px;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h5 class="fw-bold mb-1">{{ permintaan.jenis_service }}</h5>
+                    <span class="text-muted small">{{ permintaan.asset.nama_barang }} ({{ permintaan.asset.kode_barang }})</span>
+                </div>
+                <span class="badge {{ permintaan.badge_class }}">{{ permintaan.get_status_display }}</span>
+            </div>
+
+            <div class="row g-0 mb-3">
+                <div class="col-6 py-2 border-bottom border-end pe-3">
+                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Diajukan Oleh</div>
+                    <div class="fw-semibold">{{ permintaan.diajukan_oleh.username|default:"-" }}</div>
+                </div>
+                <div class="col-6 py-2 border-bottom ps-3">
+                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tanggal Diajukan</div>
+                    <div class="fw-semibold">{{ permintaan.diajukan_pada|date:"d M Y, H:i" }}</div>
+                </div>
+                <div class="col-6 py-2 border-bottom border-end pe-3">
+                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Estimasi Biaya</div>
+                    <div class="fw-semibold">{% if permintaan.biaya_estimasi %}Rp {{ permintaan.biaya_estimasi|floatformat:0 }}{% else %}-{% endif %}</div>
+                </div>
+                <div class="col-12 py-2">
+                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Keterangan</div>
+                    <div class="fw-semibold">{{ permintaan.keterangan|default:"-" }}</div>
+                </div>
+            </div>
+
+            {% if permintaan.status != 'diajukan' %}
+            <div class="rounded p-3 mb-3" style="background-color: #F4F6FB;">
+                <div class="small text-muted mb-1">Diproses oleh <strong>{{ permintaan.diproses_oleh.username }}</strong> pada {{ permintaan.diproses_pada|date:"d M Y, H:i" }}</div>
+                {% if permintaan.catatan_approval %}
+                    <div class="small">Catatan: {{ permintaan.catatan_approval }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if permintaan.status == 'diajukan' and is_approver %}
+            <hr>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <label class="form-label fw-semibold mb-1">Tanggal Pelaksanaan</label>
+                    {{ form.tanggal_pelaksanaan }}
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold mb-1">Biaya Aktual (Rp)</label>
+                    {{ form.biaya_aktual }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-1">Catatan</label>
+                    {{ form.catatan_approval }}
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit" name="aksi" value="tolak" class="btn btn-outline-danger px-4">
+                        <i class="bi bi-x-lg me-1"></i> Tolak
+                    </button>
+                    <button type="submit" name="aksi" value="setuju" class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i> Setujui
+                    </button>
+                </div>
+            </form>
+            {% elif permintaan.status == 'diajukan' %}
+            <div class="alert alert-warning small mb-0">
+                Menunggu approval dari Kasubag Umum.
+            </div>
+            {% endif %}
+
+            <div class="mt-3">
+                <a href="{% url 'asset:permintaan_service_list' %}" class="btn btn-light border">Kembali</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

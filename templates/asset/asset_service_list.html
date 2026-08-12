@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Riwayat Service - {{ asset.nama_barang }}{% endblock %}
+{% block page_title %}Manajemen Asset{% endblock %}
+
+{% block content %}
+
+<nav class="mb-3">
+    <a href="{% url 'asset:asset_list' %}" class="text-decoration-none fw-semibold text-primary">Manajemen Asset</a>
+    <span class="text-muted mx-1">›</span>
+    <a href="{% url 'asset:asset_detail' asset.pk %}" class="text-decoration-none fw-semibold text-primary">{{ asset.nama_barang }}</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">Riwayat Service</span>
+</nav>
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="fw-bold">Riwayat Service / Pemeliharaan</h2>
+        <p class="text-muted mb-0">{{ asset.nama_barang }} ({{ asset.kode_barang }})</p>
+    </div>
+    <a href="{% url 'asset:permintaan_service_create' asset.pk %}" class="btn btn-primary d-flex align-items-center gap-2">
+        <i class="bi bi-plus-lg"></i> Ajukan Service Baru
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm" style="border-radius: 14px; overflow: hidden;">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Tanggal</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Jenis Service</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Keterangan</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Biaya</th>
+                    <th class="pe-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Dicatat Oleh</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in riwayat %}
+                <tr style="border-bottom: 1px solid #F0F1F5;">
+                    <td class="ps-3 py-3">{{ r.tanggal|date:"d M Y" }}</td>
+                    <td class="fw-semibold">{{ r.jenis_service }}</td>
+                    <td class="text-muted">{{ r.keterangan|default:"-" }}</td>
+                    <td>{% if r.biaya %}Rp {{ r.biaya|floatformat:0 }}{% else %}-{% endif %}</td>
+                    <td class="pe-3 text-muted">{{ r.dibuat_oleh.username|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">Belum ada riwayat service.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'asset:asset_detail' asset.pk %}" class="btn btn-light border px-4">Kembali ke Detail Asset</a>
+</div>
+
+{% endblock %}

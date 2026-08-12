@@ -114,6 +114,30 @@
                     <div class="ms-auto fw-bold">{{ asset.merk_type }}</div>
                 </div>
 
+                <div class="d-flex align-items-center gap-3 py-3 border-bottom">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-hash text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Register</div>
+                    <div class="ms-auto fw-bold">{{ asset.register|default:"-" }}</div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3 py-3 border-bottom">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-calendar-event text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Tahun Pembelian</div>
+                    <div class="ms-auto fw-bold">{{ asset.tahun_pembelian|default:"-" }}</div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3 py-3">
+                    <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
+                        <i class="bi bi-file-earmark-text text-muted"></i>
+                    </div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">No. Sertifikat/Pabrik/Chasis/Mesin</div>
+                    <div class="ms-auto fw-bold text-end" style="max-width: 55%;">{{ asset.nomor_identitas|default:"-" }}</div>
+                </div>
+
                 <div class="d-flex align-items-center gap-3 py-3">
                     <div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:36px;height:36px;">
                         <i class="bi bi-card-text text-muted"></i>
@@ -168,6 +192,39 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold">Riwayat Service / Pemeliharaan</span>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'asset:permintaan_service_create' asset.pk %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-lg me-1"></i> Ajukan Service
+                        </a>
+                        <a href="{% url 'asset:asset_service_list' asset.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-clock-history me-1"></i> Lihat Riwayat
+                        </a>
+                    </div>
+                </div>
+                {% with asset.riwayat_service.all|slice:":3" as recent_service %}
+                {% if recent_service %}
+                <ul class="list-group list-group-flush">
+                    {% for r in recent_service %}
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <div>
+                            <div class="fw-semibold small">{{ r.jenis_service }}</div>
+                            <div class="text-muted" style="font-size:.75rem;">{{ r.tanggal|date:"d M Y" }}</div>
+                        </div>
+                        {% if r.biaya %}<span class="text-muted small">Rp {{ r.biaya|floatformat:0 }}</span>{% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted small mb-0">Belum ada riwayat service/pemeliharaan.</p>
+                {% endif %}
+                {% endwith %}
             </div>
         </div>
 
