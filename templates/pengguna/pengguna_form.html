@@ -64,25 +64,42 @@
                         <label class="form-label fw-semibold mb-1">Jabatan</label>
                         {{ form.jabatan }}
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold mb-1">Unit Kerja</label>
-                        <div class="custom-select-wrap" data-target="id_unit_kerja">
-                            <div class="custom-select-toggle form-control">
-                                <span class="custom-select-label">Pilih unit kerja</span>
-                                <i class="bi bi-chevron-down small"></i>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Jenis Akun</label>
+                            <div class="custom-select-wrap" data-target="id_jenis_akun">
+                                <div class="custom-select-toggle form-control">
+                                    <span class="custom-select-label">Umum</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </div>
+                                <div class="custom-select-menu">
+                                    <div class="custom-select-option" data-value="umum">Umum</div>
+                                    <div class="custom-select-option" data-value="balai">Balai</div>
+                                    <div class="custom-select-option" data-value="bidang">Bidang</div>
+                                </div>
                             </div>
-                            <div class="custom-select-menu scrollable-5">
-                                <div class="custom-select-option" data-value="Sekretariat">Sekretariat</div>
-                                <div class="custom-select-option" data-value="Sub Bagian Perencanaan Program & Keuangan">Sub Bagian Perencanaan Program & Keuangan</div>
-                                <div class="custom-select-option" data-value="Sub Bagian Umum dan Kepegawaian">Sub Bagian Umum dan Kepegawaian</div>
-                                <div class="custom-select-option" data-value="Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan">Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan</div>
-                                <div class="custom-select-option" data-value="Bidang Keluarga Berencana">Bidang Keluarga Berencana</div>
-                                <div class="custom-select-option" data-value="Bidang Ketahanan dan Kesejahteraan Keluarga">Bidang Ketahanan dan Kesejahteraan Keluarga</div>
-                            </div>
+                            {{ form.jenis_akun }}
                         </div>
-                        {{ form.unit_kerja }}
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold mb-1">Unit Kerja</label>
+                            <div class="custom-select-wrap" data-target="id_unit_kerja">
+                                <div class="custom-select-toggle form-control">
+                                    <span class="custom-select-label">Pilih unit kerja</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </div>
+                                <div class="custom-select-menu scrollable-5">
+                                    <div class="custom-select-option" data-value="Sekretariat">Sekretariat</div>
+                                    <div class="custom-select-option" data-value="Sub Bagian Perencanaan Program & Keuangan">Sub Bagian Perencanaan Program & Keuangan</div>
+                                    <div class="custom-select-option" data-value="Sub Bagian Umum dan Kepegawaian">Sub Bagian Umum dan Kepegawaian</div>
+                                    <div class="custom-select-option" data-value="Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan">Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan</div>
+                                    <div class="custom-select-option" data-value="Bidang KB DPPKB">Bidang KB DPPKB</div>
+                                    <div class="custom-select-option" data-value="Bidang Ketahanan dan Kesejahteraan Keluarga">Bidang Ketahanan dan Kesejahteraan Keluarga</div>
+                                </div>
+                            </div>
+                            {{ form.unit_kerja }}
+                        </div>
                     </div>
-                </div>
 
                 <div class="row g-2 mb-3">
                     <div class="col-md-6">

@@ -15,14 +15,15 @@ class PenggunaForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['nama_lengkap', 'jabatan', 'unit_kerja', 'role', 'status']
+        fields = ['nama_lengkap', 'jabatan', 'unit_kerja', 'jenis_akun', 'role', 'status']
         widgets = {
             'nama_lengkap': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama lengkap beserta gelar'}),
             'jabatan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Kepala Biro Umum'}),
             'unit_kerja': forms.Select(attrs={'class': 'd-none'}),
+            'jenis_akun': forms.Select(attrs={'class': 'd-none'}),
             'role': forms.Select(attrs={'class': 'd-none'}),
             'status': forms.Select(attrs={'class': 'd-none'}),
-        }
+            }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

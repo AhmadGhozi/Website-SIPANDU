@@ -12,12 +12,14 @@
         <p class="text-muted mb-0">Kelola dan pantau seluruh asset instansi</p>
     </div>
     <div class="d-flex gap-2">
+        {% if not is_balai_bidang %}
         <button type="submit" form="formQrMassal" class="btn btn-outline-primary d-flex align-items-center gap-2">
             <i class="bi bi-qr-code"></i> Cetak QR Terpilih
         </button>
         <a href="{% url 'asset:asset_create' %}" class="btn btn-primary d-flex align-items-center gap-2">
             <i class="bi bi-plus-lg"></i> Tambah Asset
         </a>
+        {% endif %}
     </div>
 </div>
 
@@ -54,7 +56,11 @@
         <table class="table align-middle mb-0" id="assetTable">
             <thead>
                 <tr>
-                    <th class="ps-3 py-3" style="background-color: var(--navy); width: 40px;"><input type="checkbox" id="checkAllQr" class="form-check-input"></th>
+                    <th class="ps-3 py-3" style="background-color: var(--navy); width: 40px;">
+                        {% if not is_balai_bidang %}
+                        <input type="checkbox" id="checkAllQr" class="form-check-input">
+                        {% endif %}
+                    </th>
                     <th class="ps-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Kode Barang</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Nama Barang</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Merk / Type</th>
@@ -68,7 +74,11 @@
             <tbody>
                 {% for asset in daftar_asset %}
                 <tr style="border-bottom: 1px solid #F0F1F5;">
-                    <td class="ps-3"><input type="checkbox" name="asset_ids" value="{{ asset.pk }}" form="formQrMassal" class="form-check-input qr-checkbox"></td>
+                    <td class="ps-3">
+                        {% if not is_balai_bidang %}
+                        <input type="checkbox" name="asset_ids" value="{{ asset.pk }}" form="formQrMassal" class="form-check-input qr-checkbox">
+                        {% endif %}
+                    </td>
                     <td class="ps-3 py-3">
                         <span class="badge rounded-pill px-3 py-2 bg-success" style="font-weight: 600;">
                             {{ asset.kode_barang }}
@@ -92,16 +102,17 @@
                         <a href="{% url 'asset:asset_detail' asset.pk %}" class="btn btn-sm btn-light border" title="Lihat Detail">
                             <i class="bi bi-eye"></i>
                         </a>
+                        {% if not is_balai_bidang %}
                         <a href="{% url 'asset:asset_update' asset.pk %}" class="btn btn-sm btn-light border">
                             <i class="bi bi-pencil"></i>
                         </a>
-
                         <button type="button" class="btn btn-sm btn-outline-danger"
                                 data-bs-toggle="modal" data-bs-target="#modalHapus"
                                 data-nama="{{ asset.nama_barang }}" data-kode="{{ asset.kode_barang }}"
                                 data-url="{% url 'asset:asset_delete' asset.pk %}">
                             <i class="bi bi-trash"></i>
                         </button>
+                        {% endif %}
                     </td>
                 </tr>
                 {% empty %}

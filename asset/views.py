@@ -23,6 +23,12 @@ def asset_list(request):
     query = request.GET.get('q', '')
     daftar_asset = Asset.objects.all()
 
+    # Filter khusus akun Balai/Bidang: cuma lihat asset di unit mereka sendiri
+    profile = getattr(request.user, 'profile', None)
+    is_balai_bidang = profile and profile.jenis_akun in ['balai', 'bidang']
+    if is_balai_bidang:
+        daftar_asset = daftar_asset.filter(lokasi=profile.unit_kerja)
+
     if query:
         daftar_asset = daftar_asset.filter(
             Q(kode_barang__icontains=query) |
@@ -34,6 +40,7 @@ def asset_list(request):
         'daftar_asset': daftar_asset,
         'query': query,
         'jumlah_asset': daftar_asset.count(),
+        'is_balai_bidang': is_balai_bidang,
     }
     return render(request, 'asset/asset_list.html', context)
 
