@@ -244,6 +244,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{% url 'asset:asset_list' %}" class="nav-link {% if 'asset' in request.path and 'permintaan-service' not in request.path %}active{% endif %}">
+                        <i class="bi bi-box-seam me-2"></i> Manajemen Asset
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{% url 'databarang:stok_unit_list' %}"
                         class="nav-link {% if 'stok-unit' in request.path %}active{% endif %}">
                         <i class="bi bi-box-seam me-2"></i> Stok Barang

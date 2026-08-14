@@ -26,7 +26,17 @@ class Asset(models.Model):
         ('Bidang DaldukP2 DPPKB', 'Bidang DaldukP2 DPPKB'),
         ('Bidang K3 DPPKB', 'Bidang K3 DPPKB'),
         ('Ruang Kepala Bidang K3 DPPKB', 'Ruang Kepala Bidang K3 DPPKB'),
-    ]
+        ('Balai Loa Janan Ilir', 'Balai Loa Janan Ilir'),
+        ('Balai Palaran', 'Balai Palaran'),
+        ('Balai Samarinda Ilir', 'Balai Samarinda Ilir'),
+        ('Balai Samarinda Kota', 'Balai Samarinda Kota'),
+        ('Balai Samarinda Seberang', 'Balai Samarinda Seberang'),
+        ('Balai Samarinda Ulu', 'Balai Samarinda Ulu'),
+        ('Balai Samarinda Utara', 'Balai Samarinda Utara'),
+        ('Balai Sambutan', 'Balai Sambutan'),
+        ('Balai Sungai Kunjang', 'Balai Sungai Kunjang'),
+        ('Balai Sungai Pinang', 'Balai Sungai Pinang'),
+]
 
     kode_barang = models.CharField(max_length=30, unique=True, verbose_name="Kode Barang")
     nama_barang = models.CharField(max_length=150, verbose_name="Nama Barang")

@@ -20,7 +20,17 @@ class Profile(models.Model):
         ('Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan', 'Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan'),
         ('Bidang KB DPPKB', 'Bidang KB DPPKB'),
         ('Bidang Ketahanan dan Kesejahteraan Keluarga', 'Bidang Ketahanan dan Kesejahteraan Keluarga'),
-    ]
+        ('Balai Loa Janan Ilir', 'Balai Loa Janan Ilir'),
+        ('Balai Palaran', 'Balai Palaran'),
+        ('Balai Samarinda Ilir', 'Balai Samarinda Ilir'),
+        ('Balai Samarinda Kota', 'Balai Samarinda Kota'),
+        ('Balai Samarinda Seberang', 'Balai Samarinda Seberang'),
+        ('Balai Samarinda Ulu', 'Balai Samarinda Ulu'),
+        ('Balai Samarinda Utara', 'Balai Samarinda Utara'),
+        ('Balai Sambutan', 'Balai Sambutan'),
+        ('Balai Sungai Kunjang', 'Balai Sungai Kunjang'),
+        ('Balai Sungai Pinang', 'Balai Sungai Pinang'),
+]
     JENIS_AKUN_CHOICES = [
         ('umum', 'Umum'),
         ('balai', 'Balai'),
