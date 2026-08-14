@@ -47,12 +47,16 @@ class PermintaanServiceForm(forms.Form):
     )
     keterangan = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Jelaskan kondisi/alasan pengajuan'})
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Jelaskan kondisi/alasan pengajuan'})
     )
     biaya_estimasi = forms.DecimalField(
         required=False,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Opsional'})
     )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -62,9 +66,19 @@ class PermintaanServiceForm(forms.Form):
         if kode_barang and register:
             try:
                 asset = Asset.objects.get(kode_barang=kode_barang, register=register)
-                cleaned_data['asset'] = asset
             except Asset.DoesNotExist:
                 raise forms.ValidationError('Asset dengan Kode Barang dan No. Register tersebut tidak ditemukan. Periksa kembali data yang dimasukkan.')
+
+            # Validasi khusus untuk akun Balai/Bidang
+            profile = getattr(self.user, 'profile', None)
+            if profile and profile.jenis_akun in ['balai', 'bidang']:
+                if asset.lokasi != profile.unit_kerja:
+                    raise forms.ValidationError(
+                        f'Asset ini bukan milik unit kerja Anda ({profile.unit_kerja}). '
+                        'Anda hanya bisa mengajukan service untuk asset di unit kerja Anda sendiri.'
+                    )
+
+            cleaned_data['asset'] = asset
 
         return cleaned_data
 

@@ -226,7 +226,7 @@ def asset_service_list(request, pk):
 @login_required
 def permintaan_service_create(request):
     if request.method == 'POST':
-        form = PermintaanServiceForm(request.POST)
+        form = PermintaanServiceForm(request.POST, user=request.user)
         if form.is_valid():
             asset = form.cleaned_data['asset']
             permintaan = PermintaanService.objects.create(
@@ -239,7 +239,7 @@ def permintaan_service_create(request):
             messages.success(request, f'Permintaan service untuk "{asset.nama_barang}" berhasil diajukan.')
             return redirect('asset:permintaan_service_list')
     else:
-        form = PermintaanServiceForm()
+        form = PermintaanServiceForm(user=request.user)
 
     return render(request, 'asset/permintaan_service_form.html', {'form': form})
 
