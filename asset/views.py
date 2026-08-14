@@ -246,8 +246,13 @@ def permintaan_service_create(request):
 
 @login_required
 def permintaan_service_list(request):
-    """Daftar semua permintaan service (untuk approval)."""
     permintaan_list = PermintaanService.objects.select_related('asset', 'diajukan_oleh').all()
+
+    # Filter khusus akun Balai/Bidang: cuma lihat permintaan untuk asset di unit mereka sendiri
+    profile = getattr(request.user, 'profile', None)
+    if profile and profile.jenis_akun in ['balai', 'bidang']:
+        permintaan_list = permintaan_list.filter(asset__lokasi=profile.unit_kerja)
+
     context = {
         'permintaan_list': permintaan_list,
         'is_approver': is_kasubag_umum(request.user),
