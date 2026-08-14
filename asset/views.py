@@ -16,7 +16,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas as pdf_canvas
 from dashboard.models import ActivityLog
 from .models import Asset, RiwayatService, PermintaanService
-from .forms import AssetForm, PermintaanServiceForm, ApprovalServiceForm
+from .forms import AssetForm, PermintaanServiceForm, ApprovalServiceForm, EditPermintaanServiceForm
 
 @login_required
 def asset_list(request):
@@ -309,3 +309,48 @@ def permintaan_service_detail(request, pk):
     return render(request, 'asset/permintaan_service_detail.html', {
         'permintaan': permintaan, 'is_approver': is_approver, 'form': form,
     })
+
+@login_required
+def permintaan_service_update(request, pk):
+    permintaan = get_object_or_404(PermintaanService, pk=pk)
+
+    # Cuma boleh diedit kalau masih status "diajukan"
+    if permintaan.status != 'diajukan':
+        messages.error(request, 'Permintaan yang sudah diproses tidak dapat diubah.')
+        return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+
+    # Cuma pengaju sendiri atau admin yang boleh edit
+    if permintaan.diajukan_oleh != request.user and not request.user.is_superuser:
+        messages.error(request, 'Anda tidak memiliki akses untuk mengubah permintaan ini.')
+        return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+
+    if request.method == 'POST':
+        form = EditPermintaanServiceForm(request.POST, instance=permintaan)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Permintaan service berhasil diperbarui.')
+            return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+    else:
+        form = EditPermintaanServiceForm(instance=permintaan)
+
+    return render(request, 'asset/permintaan_service_edit.html', {'form': form, 'permintaan': permintaan})
+
+
+@login_required
+def permintaan_service_delete(request, pk):
+    permintaan = get_object_or_404(PermintaanService, pk=pk)
+
+    if permintaan.status != 'diajukan':
+        messages.error(request, 'Permintaan yang sudah diproses tidak dapat dihapus.')
+        return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+
+    if permintaan.diajukan_oleh != request.user and not request.user.is_superuser:
+        messages.error(request, 'Anda tidak memiliki akses untuk menghapus permintaan ini.')
+        return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+
+    if request.method == 'POST':
+        permintaan.delete()
+        messages.success(request, 'Permintaan service berhasil dibatalkan.')
+        return redirect('asset:permintaan_service_list')
+
+    return redirect('asset:permintaan_service_detail', pk=permintaan.pk)

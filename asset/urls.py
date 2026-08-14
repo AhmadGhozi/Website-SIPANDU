@@ -16,4 +16,6 @@ urlpatterns = [
     path('permintaan-service/ajukan/', views.permintaan_service_create, name='permintaan_service_create'),
     path('permintaan-service/', views.permintaan_service_list, name='permintaan_service_list'),
     path('permintaan-service/<int:pk>/', views.permintaan_service_detail, name='permintaan_service_detail'),
+    path('permintaan-service/<int:pk>/edit/', views.permintaan_service_update, name='permintaan_service_update'),
+    path('permintaan-service/<int:pk>/hapus/', views.permintaan_service_delete, name='permintaan_service_delete'),
 ]

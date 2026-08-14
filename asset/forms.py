@@ -82,6 +82,16 @@ class PermintaanServiceForm(forms.Form):
 
         return cleaned_data
 
+class EditPermintaanServiceForm(forms.ModelForm):
+    class Meta:
+        model = PermintaanService
+        fields = ['jenis_service', 'keterangan', 'biaya_estimasi']
+        widgets = {
+            'jenis_service': forms.TextInput(attrs={'class': 'form-control'}),
+            'keterangan': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'biaya_estimasi': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
 class ApprovalServiceForm(forms.Form):
     tanggal_pelaksanaan = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
