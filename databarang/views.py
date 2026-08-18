@@ -13,7 +13,11 @@ def is_kasubag_umum(user):
 @login_required
 def barang_list(request):
     query = request.GET.get('q', '')
+    kategori = request.GET.get('kategori', '')
     daftar_barang = BarangATK.objects.all()
+
+    if kategori:
+        daftar_barang = daftar_barang.filter(kategori=kategori)
 
     if query:
         daftar_barang = daftar_barang.filter(
@@ -23,6 +27,7 @@ def barang_list(request):
     context = {
         'daftar_barang': daftar_barang,
         'query': query,
+        'kategori_aktif': kategori,
         'total_barang': BarangATK.objects.count(),
         'total_menipis': BarangATK.objects.filter(stok__gt=0, stok__lte=5).count(),
         'total_habis': BarangATK.objects.filter(stok=0).count(),

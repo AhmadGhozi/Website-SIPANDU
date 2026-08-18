@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class BarangATK(models.Model):
+    KATEGORI_CHOICES = [
+        ('atk', 'ATK'),
+        ('bhp', 'BHP'),
+    ]
     SATUAN_CHOICES = [
         ('pcs', 'Pcs'),
         ('rim', 'Rim'),
@@ -12,6 +16,7 @@ class BarangATK(models.Model):
         ('unit', 'Unit'),
     ]
 
+    kategori = models.CharField(max_length=5, choices=KATEGORI_CHOICES, default='atk')
     kode_barang = models.CharField(max_length=30, unique=True, verbose_name="Kode Barang")
     nama_barang = models.CharField(max_length=150, verbose_name="Nama Barang")
     satuan = models.CharField(max_length=10, choices=SATUAN_CHOICES, default='pcs')

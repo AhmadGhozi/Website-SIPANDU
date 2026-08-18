@@ -5,8 +5,9 @@ from .models import BarangATK, StokUnit
 class BarangATKForm(forms.ModelForm):
     class Meta:
         model = BarangATK
-        fields = ['kode_barang', 'nama_barang', 'satuan', 'stok', 'keterangan']
+        fields = ['kategori', 'kode_barang', 'nama_barang', 'satuan', 'stok', 'keterangan']
         widgets = {
+            'kategori': forms.Select(attrs={'class': 'd-none'}),
             'kode_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ATK-001'}),
             'nama_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Kertas A4'}),
             'satuan': forms.Select(attrs={'class': 'd-none'}),
