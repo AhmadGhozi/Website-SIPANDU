@@ -15,11 +15,11 @@ class Profile(models.Model):
     ]
     UNIT_KERJA_CHOICES = [
         ('Sekretariat', 'Sekretariat'),
-        ('Sub Bagian Perencanaan Program & Keuangan', 'Sub Bagian Perencanaan Program & Keuangan'),
-        ('Sub Bagian Umum dan Kepegawaian', 'Sub Bagian Umum dan Kepegawaian'),
-        ('Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan', 'Bidang Pengendalian Penduduk, Penyuluhan dan Penggerakan'),
+        ('Bagian Perencanaan Program & Keuangan DPPKB', 'Bagian Perencanaan Program & Keuangan DPPKB'),
+        ('Bagian Umum dan Kepegawaian DPPKB', 'Bagian Umum dan Kepegawaian DPPKB'),
+        ('Bidang DaldukP2 DPPKB', 'Bidang DaldukP2 DPPKB'),
         ('Bidang KB DPPKB', 'Bidang KB DPPKB'),
-        ('Bidang Ketahanan dan Kesejahteraan Keluarga', 'Bidang Ketahanan dan Kesejahteraan Keluarga'),
+        ('Bidang K3 DPPKB', 'Bidang K3 DPPKB'),
         ('Balai Loa Janan Ilir', 'Balai Loa Janan Ilir'),
         ('Balai Palaran', 'Balai Palaran'),
         ('Balai Samarinda Ilir', 'Balai Samarinda Ilir'),
@@ -30,7 +30,7 @@ class Profile(models.Model):
         ('Balai Sambutan', 'Balai Sambutan'),
         ('Balai Sungai Kunjang', 'Balai Sungai Kunjang'),
         ('Balai Sungai Pinang', 'Balai Sungai Pinang'),
-]
+    ]
     JENIS_AKUN_CHOICES = [
         ('umum', 'Umum'),
         ('balai', 'Balai'),
