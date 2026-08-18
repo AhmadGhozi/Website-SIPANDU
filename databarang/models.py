@@ -43,6 +43,10 @@ class BarangATK(models.Model):
         return 'aman'
 
 class StokUnit(models.Model):
+    KATEGORI_CHOICES = [
+        ('atk', 'ATK'),
+        ('bhp', 'BHP'),
+    ]
     SATUAN_CHOICES = [
         ('pcs', 'Pcs'),
         ('rim', 'Rim'),
@@ -53,6 +57,7 @@ class StokUnit(models.Model):
         ('unit', 'Unit'),
     ]
 
+    kategori = models.CharField(max_length=5, choices=KATEGORI_CHOICES, default='atk')
     unit_kerja = models.CharField(max_length=100, verbose_name="Unit Kerja Pemilik")
     kode_barang = models.CharField(max_length=30, verbose_name="Kode Barang")
     nama_barang = models.CharField(max_length=150, verbose_name="Nama Barang")

@@ -261,24 +261,36 @@ def permintaan_dinas_detail(request, pk):
             return redirect('databarang:permintaan_dinas_list')
 
         elif aksi == 'setuju':
-            # Cek stok cukup untuk semua item sebelum diproses
             for item in permintaan.items.all():
                 if item.jumlah > item.barang.stok:
                     messages.error(request, f'Stok "{item.barang.nama_barang}" tidak mencukupi (tersedia {item.barang.stok}, diminta {item.jumlah}).')
                     return redirect('databarang:permintaan_dinas_detail', pk=permintaan.pk)
 
-            # Kurangi stok pusat
+    
             for item in permintaan.items.all():
                 item.barang.stok -= item.jumlah
                 item.barang.save()
 
-            permintaan.status = 'disetujui'
-            permintaan.catatan_approval = catatan
-            permintaan.diproses_oleh = request.user
-            permintaan.diproses_pada = timezone.now()
-            permintaan.save()
-            messages.success(request, 'Permintaan disetujui, stok pusat telah diperbarui.')
-            return redirect('databarang:permintaan_dinas_list')
+                stok_unit, created = StokUnit.objects.get_or_create(
+                unit_kerja=permintaan.unit_kerja,
+                kode_barang=item.barang.kode_barang,
+                defaults={
+                    'kategori': item.barang.kategori,
+                    'nama_barang': item.barang.nama_barang,
+                    'satuan': item.barang.satuan,
+                    'stok': 0,
+                }
+            )
+            stok_unit.stok += item.jumlah
+            stok_unit.save()
+
+        permintaan.status = 'disetujui'
+        permintaan.catatan_approval = catatan
+        permintaan.diproses_oleh = request.user
+        permintaan.diproses_pada = timezone.now()
+        permintaan.save()
+        messages.success(request, 'Permintaan disetujui, stok pusat dan stok unit telah diperbarui.')
+        return redirect('databarang:permintaan_dinas_list')
 
     return render(request, 'databarang/permintaan_dinas_detail.html', {
         'permintaan': permintaan, 'is_approver': is_approver,
