@@ -90,9 +90,9 @@ def barang_delete(request, pk):
     return redirect('databarang:barang_list')
 
 def get_unit_kerja(request):
-    """Helper: pastikan user adalah akun Balai/Bidang, kembalikan unit_kerja-nya."""
+    """Ambil unit_kerja user, berlaku untuk semua jenis akun (Umum/Balai/Bidang)."""
     profile = getattr(request.user, 'profile', None)
-    if profile and profile.jenis_akun in ['balai', 'bidang']:
+    if profile and profile.unit_kerja:
         return profile.unit_kerja
     return None
 
@@ -184,7 +184,7 @@ def stok_unit_delete(request, pk):
 def permintaan_dinas_create(request):
     unit_kerja = get_unit_kerja(request)
     if not unit_kerja:
-        messages.error(request, 'Halaman ini khusus untuk akun Balai/Bidang.')
+        messages.error(request, 'Profil Anda belum memiliki Unit Kerja. Hubungi Admin untuk melengkapi data.')
         return redirect('dashboard')
 
     daftar_barang = BarangATK.objects.all()
@@ -211,20 +211,20 @@ def permintaan_dinas_create(request):
                     barang_id=barang_id,
                     jumlah=jumlah,
                 )
-            messages.success(request, 'Permintaan ke Dinas berhasil diajukan.')
+            messages.success(request, 'Permintaan berhasil diajukan.')
             return redirect('databarang:permintaan_dinas_list')
 
     return render(request, 'databarang/permintaan_dinas_form.html', {
         'daftar_barang': daftar_barang, 'unit_kerja': unit_kerja,
     })
 
-
 @login_required
 def permintaan_dinas_list(request):
     permintaan_list = PermintaanDinas.objects.select_related('diajukan_oleh').prefetch_related('items__barang').all()
 
     unit_kerja = get_unit_kerja(request)
-    if unit_kerja:
+
+    if not is_kasubag_umum(request.user) and unit_kerja:
         permintaan_list = permintaan_list.filter(unit_kerja=unit_kerja)
 
     context = {
