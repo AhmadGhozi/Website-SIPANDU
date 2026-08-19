@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Data Service{% endblock %}
+{% block page_title %}Pengaturan / Data Service{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2 class="fw-bold">Data Service / Pemeliharaan</h2>
+    <p class="text-muted mb-0">Riwayat lengkap service yang sudah disetujui</p>
+</div>
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="text-muted small">Total Service</div>
+                    <div class="fs-4 fw-bold">{{ total_service }}</div>
+                    <div class="text-muted small">transaksi</div>
+                </div>
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:38px;height:38px;background-color:#EAF1FF; color:#2F5FD6;">
+                    <i class="bi bi-tools"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="text-muted small">Total Biaya</div>
+                    <div class="fs-4 fw-bold">Rp {{ total_biaya|floatformat:0 }}</div>
+                    <div class="text-muted small">keseluruhan</div>
+                </div>
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:38px;height:38px;background-color:#EAFBF1; color:#15803D;">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="text-muted small">Jenis Service</div>
+                    <div class="fs-4 fw-bold">{{ jenis_unik }}</div>
+                    <div class="text-muted small">kategori unik</div>
+                </div>
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:38px;height:38px;background-color:#F3E8FF; color:#7C3AED;">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CHARTS -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="fw-bold mb-3">Biaya per Asset</div>
+                <div style="height: 220px;">
+                    <canvas id="chartBiayaAsset"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="fw-bold mb-3">Tren Biaya Bulanan</div>
+                <div style="height: 220px;">
+                    <canvas id="chartTrenBulanan"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="fw-bold mb-3">Distribusi Jenis Service</div>
+                <div style="height: 220px;">
+                    <canvas id="chartDistribusiJenis"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RINGKASAN + TABEL -->
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="fw-bold mb-3">Ringkasan per Asset</div>
+                <div style="max-height: 460px; overflow-y: auto;">
+                    {% for r in ringkasan_per_asset %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-semibold small">{{ r.asset__nama_barang }}</span>
+                            <span class="badge bg-primary">{{ r.total_service }}x</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar" style="width: {% widthratio r.total_biaya max_biaya_asset 100 %}%; background-color: var(--navy);"></div>
+                        </div>
+                        <div class="text-muted small mt-1">Rp {{ r.total_biaya|floatformat:0 }} total biaya</div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small mb-0">Belum ada riwayat service.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form method="get" class="d-flex gap-2 mb-3 flex-wrap">
+                    <div class="input-group" style="max-width: 300px;">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Cari asset atau jenis service...">
+                    </div>
+                    <select name="jenis" class="form-select" style="max-width: 220px;" onchange="this.form.submit()">
+                        <option value="">Semua Jenis</option>
+                        {% for j in daftar_jenis %}
+                        <option value="{{ j }}" {% if jenis_filter == j %}selected{% endif %}>{{ j }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Cari</button>
+                </form>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm align-middle">
+                        <thead class="text-muted small text-uppercase">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Asset</th>
+                                <th>Kode Barang</th>
+                                <th>Jenis Service</th>
+                                <th>Biaya</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in riwayat %}
+                            <tr>
+                                <td class="text-muted">{{ r.tanggal|date:"d M Y" }}</td>
+                                <td>
+                                    <a href="{% url 'asset:asset_detail' r.asset.pk %}" class="text-decoration-none fw-semibold">
+                                        {{ r.asset.nama_barang }}
+                                    </a>
+                                </td>
+                                <td><code>{{ r.asset.kode_barang }}</code></td>
+                                <td>{{ r.jenis_service }}</td>
+                                <td class="fw-semibold">{% if r.biaya %}Rp {{ r.biaya|floatformat:0 }}{% else %}-{% endif %}</td>
+                                <td><span class="badge bg-success">Selesai</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="text-center text-muted py-4">Belum ada riwayat service.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    // Bar chart: Biaya per Asset
+    new Chart(document.getElementById('chartBiayaAsset'), {
+        type: 'bar',
+        data: {
+            labels: [{% for r in ringkasan_per_asset %}"{{ r.asset__nama_barang }}",{% endfor %}],
+            datasets: [{
+                data: [{% for r in ringkasan_per_asset %}{{ r.total_biaya|default:0 }},{% endfor %}],
+                backgroundColor: ['#2F5FD6', '#22C55E', '#F59E0B', '#EF4444', '#7C3AED', '#06B6D4'],
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Line chart: Tren Biaya Bulanan
+    new Chart(document.getElementById('chartTrenBulanan'), {
+        type: 'line',
+        data: {
+            labels: [{% for t in tren_bulanan %}"{{ t.bulan|date:'M' }}",{% endfor %}],
+            datasets: [{
+                data: [{% for t in tren_bulanan %}{{ t.total|default:0 }},{% endfor %}],
+                borderColor: '#2F5FD6',
+                backgroundColor: 'rgba(47,95,214,0.08)',
+                tension: 0.4,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Donut: Distribusi Jenis Service
+    new Chart(document.getElementById('chartDistribusiJenis'), {
+        type: 'doughnut',
+        data: {
+            labels: [{% for d in distribusi_jenis %}"{{ d.jenis_service }}",{% endfor %}],
+            datasets: [{
+                data: [{% for d in distribusi_jenis %}{{ d.total }},{% endfor %}],
+                backgroundColor: ['#2F5FD6', '#EF4444', '#7C3AED', '#22C55E', '#F59E0B', '#06B6D4', '#EC4899', '#84CC16'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '55%',
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 10 } } } }
+        }
+    });
+</script>
+{% endblock %}
