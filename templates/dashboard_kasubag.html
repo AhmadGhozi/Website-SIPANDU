@@ -254,7 +254,7 @@
             <div class="card-body">
                 <div class="fw-bold mb-3">Stok Barang per Unit</div>
 
-                <form method="get" class="mb-3">
+                <form method="get" class="mb-3" id="formFilterUnit">
                     <input type="hidden" name="q" value="{{ query }}">
                     <input type="hidden" name="kategori" value="{{ kategori_aktif }}">
                     <div class="custom-select-wrap" data-target="id_unit_filter">
@@ -406,4 +406,11 @@
         plugins: { legend: { display: false } } }
     });
 </script>
+
+<script>
+    document.getElementById('id_unit_filter').addEventListener('change', function () {
+        document.getElementById('formFilterUnit').submit();
+    });
+</script>
+
 {% endblock %}

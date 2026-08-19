@@ -78,6 +78,7 @@
             <thead>
                 <tr>
                     <th class="ps-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Kode Barang</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Kategori</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Nama Barang</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Satuan</th>
                     <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Stok</th>
@@ -90,6 +91,13 @@
                 <tr style="border-bottom: 1px solid #F0F1F5;">
                     <td class="ps-3 py-3">
                         <span class="badge rounded-pill px-3 py-2 bg-success">{{ stok.kode_barang }}</span>
+                    </td>
+                    <td>
+                        {% if stok.kategori == 'atk' %}
+                        <span class="badge bg-primary">ATK</span>
+                        {% else %}
+                        <span class="badge" style="background-color:#F3E8FF; color:#7C3AED;">BHP</span>
+                        {% endif %}
                     </td>
                     <td class="fw-semibold">{{ stok.nama_barang }}</td>
                     <td class="text-muted">{{ stok.get_satuan_display }}</td>
@@ -117,7 +125,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">Belum ada data stok barang.</td>
+                    <td colspan="7" class="text-center text-muted py-4">Belum ada data stok barang.</td>
                 </tr>
                 {% endfor %}
             </tbody>
