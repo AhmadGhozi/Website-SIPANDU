@@ -11,4 +11,5 @@ urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('pengguna/', include('pengguna.urls')),
     path('databarang/', include('databarang.urls')),
+    path('dataservice/', include('dataservice.urls')),
 ]

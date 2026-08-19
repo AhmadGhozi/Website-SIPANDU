@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'asset',
     'pengguna',
     'databarang',
+    'dataservice',
 ]
 
 MIDDLEWARE = [
