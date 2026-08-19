@@ -426,6 +426,7 @@
             options.forEach(function (opt) {
                 opt.addEventListener('click', function () {
                     select.value = opt.dataset.value;
+                    select.dispatchEvent(new Event('change'));
                     label.textContent = opt.textContent;
                     options.forEach(function (o) { o.classList.remove('active'); });
                     opt.classList.add('active');

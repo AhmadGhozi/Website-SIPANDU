@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2 class="fw-bold">Dashboard Kasubag Umum</h2>
+    <p class="text-muted mb-0">{% now "l, d F Y" %}</p>
+</div>
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex gap-3">
+                <div class="stat-icon bg-warning"><i class="bi bi-cart-fill"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Permintaan ATK</div>
+                    <div class="fs-4 fw-bold">{{ total_atk_pending }}</div>
+                    <div class="text-muted small">menunggu approval</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex gap-3">
+                <div class="stat-icon bg-primary"><i class="bi bi-tools"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Permintaan Service</div>
+                    <div class="fs-4 fw-bold">{{ total_service_pending }}</div>
+                    <div class="text-muted small">menunggu approval</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex gap-3">
+                <div class="stat-icon" style="background-color: var(--navy);"><i class="bi bi-box-seam-fill"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Total Asset</div>
+                    <div class="fs-4 fw-bold">{{ total_asset }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex gap-3">
+                <div class="stat-icon bg-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Stok Dinas Menipis/Habis</div>
+                    <div class="fs-4 fw-bold">{{ total_stok_menipis }} / {{ total_stok_habis }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Stok Barang Dinas (Pusat) -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold">Stok Barang Dinas (Pusat)</span>
+                    <a href="{% url 'databarang:barang_list' %}" class="small fw-semibold text-decoration-none">Lihat semua</a>
+                </div>
+                <ul class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
+                    {% for barang in stok_dinas %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <div>
+                            <div class="fw-semibold small">{{ barang.nama_barang }}</div>
+                            <div class="text-muted" style="font-size:.75rem;">{{ barang.get_kategori_display }}</div>
+                        </div>
+                        {% if barang.status_stok == 'habis' %}
+                            <span class="badge bg-danger">Habis</span>
+                        {% elif barang.status_stok == 'menipis' %}
+                            <span class="badge bg-warning text-dark">{{ barang.stok }} {{ barang.get_satuan_display }}</span>
+                        {% else %}
+                            <span class="badge bg-success">{{ barang.stok }} {{ barang.get_satuan_display }}</span>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted small px-0">Belum ada data.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stok Barang per Unit (dengan filter) -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold">Stok Barang per Unit</span>
+                </div>
+
+                <form method="get" class="mb-3" id="formFilterUnit">
+                    <div class="custom-select-wrap" data-target="id_unit_filter">
+                        <div class="custom-select-toggle form-control">
+                            <span class="custom-select-label">-- Pilih Balai / Bidang --</span>
+                            <i class="bi bi-chevron-down small"></i>
+                        </div>
+                        <div class="custom-select-menu scrollable-5">
+                            <div class="custom-select-option" data-value="Sekretariat">Sekretariat</div>
+                            <div class="custom-select-option" data-value="Bagian Perencanaan Program & Keuangan DPPKB">Bagian Perencanaan Program & Keuangan DPPKB</div>
+                            <div class="custom-select-option" data-value="Bagian Umum dan Kepegawaian DPPKB">Bagian Umum dan Kepegawaian DPPKB</div>
+                            <div class="custom-select-option" data-value="Bidang DaldukP2 DPPKB">Bidang DaldukP2 DPPKB</div>
+                            <div class="custom-select-option" data-value="Bidang KB DPPKB">Bidang KB DPPKB</div>
+                            <div class="custom-select-option" data-value="Bidang K3 DPPKB">Bidang K3 DPPKB</div>
+                            <div class="custom-select-option" data-value="Balai Loa Janan Ilir">Balai Loa Janan Ilir</div>
+                            <div class="custom-select-option" data-value="Balai Palaran">Balai Palaran</div>
+                            <div class="custom-select-option" data-value="Balai Samarinda Ilir">Balai Samarinda Ilir</div>
+                            <div class="custom-select-option" data-value="Balai Samarinda Kota">Balai Samarinda Kota</div>
+                            <div class="custom-select-option" data-value="Balai Samarinda Seberang">Balai Samarinda Seberang</div>
+                            <div class="custom-select-option" data-value="Balai Samarinda Ulu">Balai Samarinda Ulu</div>
+                            <div class="custom-select-option" data-value="Balai Samarinda Utara">Balai Samarinda Utara</div>
+                            <div class="custom-select-option" data-value="Balai Sambutan">Balai Sambutan</div>
+                            <div class="custom-select-option" data-value="Balai Sungai Kunjang">Balai Sungai Kunjang</div>
+                            <div class="custom-select-option" data-value="Balai Sungai Pinang">Balai Sungai Pinang</div>
+                        </div>
+                        <select name="unit" id="id_unit_filter" class="d-none">
+                            <option value="">-- Pilih Balai / Bidang --</option>
+                            <option value="Sekretariat" {% if unit_filter == "Sekretariat" %}selected{% endif %}>Sekretariat</option>
+                            <option value="Bagian Perencanaan Program & Keuangan DPPKB" {% if unit_filter == "Bagian Perencanaan Program & Keuangan DPPKB" %}selected{% endif %}>Bagian Perencanaan Program & Keuangan DPPKB</option>
+                            <option value="Bagian Umum dan Kepegawaian DPPKB" {% if unit_filter == "Bagian Umum dan Kepegawaian DPPKB" %}selected{% endif %}>Bagian Umum dan Kepegawaian DPPKB</option>
+                            <option value="Bidang DaldukP2 DPPKB" {% if unit_filter == "Bidang DaldukP2 DPPKB" %}selected{% endif %}>Bidang DaldukP2 DPPKB</option>
+                            <option value="Bidang KB DPPKB" {% if unit_filter == "Bidang KB DPPKB" %}selected{% endif %}>Bidang KB DPPKB</option>
+                            <option value="Bidang K3 DPPKB" {% if unit_filter == "Bidang K3 DPPKB" %}selected{% endif %}>Bidang K3 DPPKB</option>
+                            <option value="Balai Loa Janan Ilir" {% if unit_filter == "Balai Loa Janan Ilir" %}selected{% endif %}>Balai Loa Janan Ilir</option>
+                            <option value="Balai Palaran" {% if unit_filter == "Balai Palaran" %}selected{% endif %}>Balai Palaran</option>
+                            <option value="Balai Samarinda Ilir" {% if unit_filter == "Balai Samarinda Ilir" %}selected{% endif %}>Balai Samarinda Ilir</option>
+                            <option value="Balai Samarinda Kota" {% if unit_filter == "Balai Samarinda Kota" %}selected{% endif %}>Balai Samarinda Kota</option>
+                            <option value="Balai Samarinda Seberang" {% if unit_filter == "Balai Samarinda Seberang" %}selected{% endif %}>Balai Samarinda Seberang</option>
+                            <option value="Balai Samarinda Ulu" {% if unit_filter == "Balai Samarinda Ulu" %}selected{% endif %}>Balai Samarinda Ulu</option>
+                            <option value="Balai Samarinda Utara" {% if unit_filter == "Balai Samarinda Utara" %}selected{% endif %}>Balai Samarinda Utara</option>
+                            <option value="Balai Sambutan" {% if unit_filter == "Balai Sambutan" %}selected{% endif %}>Balai Sambutan</option>
+                            <option value="Balai Sungai Kunjang" {% if unit_filter == "Balai Sungai Kunjang" %}selected{% endif %}>Balai Sungai Kunjang</option>
+                            <option value="Balai Sungai Pinang" {% if unit_filter == "Balai Sungai Pinang" %}selected{% endif %}>Balai Sungai Pinang</option>
+                        </select>
+
+                {% if unit_filter %}
+                    <ul class="list-group list-group-flush" style="max-height: 260px; overflow-y: auto;">
+                        {% for stok in stok_unit_terpilih %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div class="fw-semibold small">{{ stok.nama_barang }}</div>
+                            <span class="fw-bold small">{{ stok.stok }} {{ stok.get_satuan_display }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted small px-0">Unit ini belum punya data stok.</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted small mb-0">Pilih Balai/Bidang untuk melihat stok mereka.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.getElementById('id_unit_filter').addEventListener('change', function () {
+        document.getElementById('formFilterUnit').submit();
+    });
+</script>
+{% endblock %}
+
+{% endblock %}
