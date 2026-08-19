@@ -38,7 +38,7 @@ class BarangATK(models.Model):
     def status_stok(self):
         if self.stok == 0:
             return 'habis'
-        elif self.stok <= 5:
+        elif self.stok <= 10:
             return 'menipis'
         return 'aman'
 
@@ -81,7 +81,7 @@ class StokUnit(models.Model):
     def status_stok(self):
         if self.stok == 0:
             return 'habis'
-        elif self.stok <= 5:
+        elif self.stok <= 10:
             return 'menipis'
         return 'aman'
 

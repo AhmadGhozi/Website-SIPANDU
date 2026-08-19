@@ -43,6 +43,7 @@
                 <div>
                     <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Total Asset</div>
                     <div class="fs-4 fw-bold">{{ total_asset }}</div>
+                    <div class="text-muted small">terdaftar di sistem</div>
                 </div>
             </div>
         </div>
@@ -52,58 +53,213 @@
             <div class="card-body d-flex gap-3">
                 <div class="stat-icon bg-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
                 <div>
-                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Stok Dinas Menipis/Habis</div>
-                    <div class="fs-4 fw-bold">{{ total_stok_menipis }} / {{ total_stok_habis }}</div>
+                    <div class="text-muted text-uppercase small fw-semibold" style="font-size:.7rem;">Stok Menipis/Habis</div>
+                    <div class="fs-4 fw-bold">{{ total_stok_menipis }}/{{ total_stok_habis }}</div>
+                    <div class="text-muted small">item perlu pengadaan</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-3">
-    <!-- Stok Barang Dinas (Pusat) -->
+<!-- CHARTS -->
+<div class="row g-3 mb-3">
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="fw-bold">Stok Barang Dinas (Pusat)</span>
-                    <a href="{% url 'databarang:barang_list' %}" class="small fw-semibold text-decoration-none">Lihat semua</a>
+                <div class="fw-bold">Stok Barang ATK/BHP</div>
+                <div class="text-muted small mb-3">Gudang pusat dinas</div>
+                <div style="height: 220px;">
+                    <canvas id="chartStokBarang"></canvas>
                 </div>
-                <ul class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
-                    {% for barang in stok_dinas %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <div>
-                            <div class="fw-semibold small">{{ barang.nama_barang }}</div>
-                            <div class="text-muted" style="font-size:.75rem;">{{ barang.get_kategori_display }}</div>
-                        </div>
-                        {% if barang.status_stok == 'habis' %}
-                            <span class="badge bg-danger">Habis</span>
-                        {% elif barang.status_stok == 'menipis' %}
-                            <span class="badge bg-warning text-dark">{{ barang.stok }} {{ barang.get_satuan_display }}</span>
-                        {% else %}
-                            <span class="badge bg-success">{{ barang.stok }} {{ barang.get_satuan_display }}</span>
-                        {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="fw-bold text-start">Status Permintaan ATK</div>
+                <div class="text-muted small mb-3 text-start">{{ atk_diajukan|add:atk_disetujui|add:atk_ditolak }} total permintaan</div>
+                <div style="height: 180px;">
+                    <canvas id="chartStatusAtk"></canvas>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-3 small">
+                    <span><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#F59E0B;"></span> Menunggu</span>
+                    <span><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#2F5FD6;"></span> Disetujui</span>
+                    <span><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#22C55E;"></span> Ditolak</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="fw-bold text-start">Status Permintaan Service</div>
+                <div class="text-muted small mb-3 text-start">{{ service_diajukan|add:service_disetujui|add:service_ditolak }} total permintaan</div>
+                <div style="height: 180px;">
+                    <canvas id="chartStatusService"></canvas>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-3 small">
+                    <span><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#F59E0B;"></span> Menunggu</span>
+                    <span><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#2F5FD6;"></span> Disetujui</span>
+                    <span><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#22C55E;"></span> Ditolak</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TABS + STOK PER UNIT -->
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="dashTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-tab="tabBarang" type="button">Data Barang ATK/BHP</button>
                     </li>
-                    {% empty %}
-                    <li class="list-group-item text-muted small px-0">Belum ada data.</li>
-                    {% endfor %}
+                    <li class="nav-item">
+                        <button class="nav-link" data-tab="tabAtk" type="button">Permintaan ATK</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-tab="tabService" type="button">Permintaan Service</button>
+                    </li>
                 </ul>
+
+                <!-- TAB: Data Barang -->
+                <div class="tab-pane" id="tabBarang">
+                    <form method="get" class="d-flex align-items-center gap-2 mb-3">
+                        <input type="hidden" name="unit" value="{{ unit_filter }}">
+                        <div class="input-group" style="max-width: 260px;">
+                            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Cari barang...">
+                        </div>
+                        <button type="submit" name="kategori" value="" class="btn btn-sm {% if not kategori_aktif %}btn-primary{% else %}btn-light border{% endif %}">Semua</button>
+                        <button type="submit" name="kategori" value="atk" class="btn btn-sm {% if kategori_aktif == 'atk' %}btn-primary{% else %}btn-light border{% endif %}">ATK</button>
+                        <button type="submit" name="kategori" value="bhp" class="btn btn-sm {% if kategori_aktif == 'bhp' %}btn-primary{% else %}btn-light border{% endif %}">BHP</button>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="text-muted small text-uppercase">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nama Barang</th>
+                                    <th>Kat.</th>
+                                    <th>Satuan</th>
+                                    <th>Stok</th>
+                                    <th>Min</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for barang in daftar_barang %}
+                                <tr>
+                                    <td class="text-muted">{{ forloop.counter }}</td>
+                                    <td class="fw-semibold">{{ barang.nama_barang }}</td>
+                                    <td>
+                                        {% if barang.kategori == 'atk' %}
+                                            <span class="badge bg-primary">ATK</span>
+                                        {% else %}
+                                            <span class="badge" style="background-color:#F3E8FF; color:#7C3AED;">BHP</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ barang.get_satuan_display }}</td>
+                                    <td class="fw-bold">{{ barang.stok }}</td>
+                                    <td class="text-muted">10</td>
+                                    <td>
+                                        {% if barang.status_stok == 'habis' %}
+                                            <span class="badge bg-danger">Habis</span>
+                                        {% elif barang.status_stok == 'menipis' %}
+                                            <span class="badge bg-warning text-dark">Menipis</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Normal</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada data barang.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: Permintaan ATK -->
+                <div class="tab-pane d-none" id="tabAtk">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="text-muted small text-uppercase">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Unit Kerja</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in permintaan_atk_list %}
+                                <tr>
+                                    <td class="fw-semibold">{{ p.nomor }}</td>
+                                    <td>{{ p.unit_kerja }}</td>
+                                    <td class="text-muted">{{ p.diajukan_pada|date:"d M Y" }}</td>
+                                    <td><span class="badge {{ p.badge_class }}">{{ p.get_status_display }}</span></td>
+                                    <td><a href="{% url 'databarang:permintaan_dinas_detail' p.pk %}" class="btn btn-sm btn-light border">Detail</a></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="text-center text-muted py-4">Belum ada permintaan.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: Permintaan Service -->
+                <div class="tab-pane d-none" id="tabService">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="text-muted small text-uppercase">
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Jenis Service</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in permintaan_service_list %}
+                                <tr>
+                                    <td class="fw-semibold">{{ p.asset.nama_barang }}</td>
+                                    <td>{{ p.jenis_service }}</td>
+                                    <td class="text-muted">{{ p.diajukan_pada|date:"d M Y" }}</td>
+                                    <td><span class="badge {{ p.badge_class }}">{{ p.get_status_display }}</span></td>
+                                    <td><a href="{% url 'asset:permintaan_service_detail' p.pk %}" class="btn btn-sm btn-light border">Detail</a></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="text-center text-muted py-4">Belum ada permintaan.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Stok Barang per Unit (dengan filter) -->
-    <div class="col-lg-6">
+    <!-- STOK PER UNIT -->
+    <div class="col-lg-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="fw-bold">Stok Barang per Unit</span>
-                </div>
+                <div class="fw-bold mb-3">Stok Barang per Unit</div>
 
-                <form method="get" class="mb-3" id="formFilterUnit">
+                <form method="get" class="mb-3">
+                    <input type="hidden" name="q" value="{{ query }}">
+                    <input type="hidden" name="kategori" value="{{ kategori_aktif }}">
                     <div class="custom-select-wrap" data-target="id_unit_filter">
                         <div class="custom-select-toggle form-control">
-                            <span class="custom-select-label">-- Pilih Balai / Bidang --</span>
+                            <span class="custom-select-label">Pilih Unit</span>
                             <i class="bi bi-chevron-down small"></i>
                         </div>
                         <div class="custom-select-menu scrollable-5">
@@ -124,51 +280,130 @@
                             <div class="custom-select-option" data-value="Balai Sungai Kunjang">Balai Sungai Kunjang</div>
                             <div class="custom-select-option" data-value="Balai Sungai Pinang">Balai Sungai Pinang</div>
                         </div>
-                        <select name="unit" id="id_unit_filter" class="d-none">
-                            <option value="">-- Pilih Balai / Bidang --</option>
-                            <option value="Sekretariat" {% if unit_filter == "Sekretariat" %}selected{% endif %}>Sekretariat</option>
-                            <option value="Bagian Perencanaan Program & Keuangan DPPKB" {% if unit_filter == "Bagian Perencanaan Program & Keuangan DPPKB" %}selected{% endif %}>Bagian Perencanaan Program & Keuangan DPPKB</option>
-                            <option value="Bagian Umum dan Kepegawaian DPPKB" {% if unit_filter == "Bagian Umum dan Kepegawaian DPPKB" %}selected{% endif %}>Bagian Umum dan Kepegawaian DPPKB</option>
-                            <option value="Bidang DaldukP2 DPPKB" {% if unit_filter == "Bidang DaldukP2 DPPKB" %}selected{% endif %}>Bidang DaldukP2 DPPKB</option>
-                            <option value="Bidang KB DPPKB" {% if unit_filter == "Bidang KB DPPKB" %}selected{% endif %}>Bidang KB DPPKB</option>
-                            <option value="Bidang K3 DPPKB" {% if unit_filter == "Bidang K3 DPPKB" %}selected{% endif %}>Bidang K3 DPPKB</option>
-                            <option value="Balai Loa Janan Ilir" {% if unit_filter == "Balai Loa Janan Ilir" %}selected{% endif %}>Balai Loa Janan Ilir</option>
-                            <option value="Balai Palaran" {% if unit_filter == "Balai Palaran" %}selected{% endif %}>Balai Palaran</option>
-                            <option value="Balai Samarinda Ilir" {% if unit_filter == "Balai Samarinda Ilir" %}selected{% endif %}>Balai Samarinda Ilir</option>
-                            <option value="Balai Samarinda Kota" {% if unit_filter == "Balai Samarinda Kota" %}selected{% endif %}>Balai Samarinda Kota</option>
-                            <option value="Balai Samarinda Seberang" {% if unit_filter == "Balai Samarinda Seberang" %}selected{% endif %}>Balai Samarinda Seberang</option>
-                            <option value="Balai Samarinda Ulu" {% if unit_filter == "Balai Samarinda Ulu" %}selected{% endif %}>Balai Samarinda Ulu</option>
-                            <option value="Balai Samarinda Utara" {% if unit_filter == "Balai Samarinda Utara" %}selected{% endif %}>Balai Samarinda Utara</option>
-                            <option value="Balai Sambutan" {% if unit_filter == "Balai Sambutan" %}selected{% endif %}>Balai Sambutan</option>
-                            <option value="Balai Sungai Kunjang" {% if unit_filter == "Balai Sungai Kunjang" %}selected{% endif %}>Balai Sungai Kunjang</option>
-                            <option value="Balai Sungai Pinang" {% if unit_filter == "Balai Sungai Pinang" %}selected{% endif %}>Balai Sungai Pinang</option>
-                        </select>
+                    </div>
+                    <select name="unit" id="id_unit_filter" class="d-none">
+                        <option value="Sekretariat" {% if unit_filter == "Sekretariat" %}selected{% endif %}>Sekretariat</option>
+                        <option value="Bagian Perencanaan Program & Keuangan DPPKB" {% if unit_filter == "Bagian Perencanaan Program & Keuangan DPPKB" %}selected{% endif %}>Bagian Perencanaan Program & Keuangan DPPKB</option>
+                        <option value="Bagian Umum dan Kepegawaian DPPKB" {% if unit_filter == "Bagian Umum dan Kepegawaian DPPKB" %}selected{% endif %}>Bagian Umum dan Kepegawaian DPPKB</option>
+                        <option value="Bidang DaldukP2 DPPKB" {% if unit_filter == "Bidang DaldukP2 DPPKB" %}selected{% endif %}>Bidang DaldukP2 DPPKB</option>
+                        <option value="Bidang KB DPPKB" {% if unit_filter == "Bidang KB DPPKB" %}selected{% endif %}>Bidang KB DPPKB</option>
+                        <option value="Bidang K3 DPPKB" {% if unit_filter == "Bidang K3 DPPKB" %}selected{% endif %}>Bidang K3 DPPKB</option>
+                        <option value="Balai Loa Janan Ilir" {% if unit_filter == "Balai Loa Janan Ilir" %}selected{% endif %}>Balai Loa Janan Ilir</option>
+                        <option value="Balai Palaran" {% if unit_filter == "Balai Palaran" %}selected{% endif %}>Balai Palaran</option>
+                        <option value="Balai Samarinda Ilir" {% if unit_filter == "Balai Samarinda Ilir" %}selected{% endif %}>Balai Samarinda Ilir</option>
+                        <option value="Balai Samarinda Kota" {% if unit_filter == "Balai Samarinda Kota" %}selected{% endif %}>Balai Samarinda Kota</option>
+                        <option value="Balai Samarinda Seberang" {% if unit_filter == "Balai Samarinda Seberang" %}selected{% endif %}>Balai Samarinda Seberang</option>
+                        <option value="Balai Samarinda Ulu" {% if unit_filter == "Balai Samarinda Ulu" %}selected{% endif %}>Balai Samarinda Ulu</option>
+                        <option value="Balai Samarinda Utara" {% if unit_filter == "Balai Samarinda Utara" %}selected{% endif %}>Balai Samarinda Utara</option>
+                        <option value="Balai Sambutan" {% if unit_filter == "Balai Sambutan" %}selected{% endif %}>Balai Sambutan</option>
+                        <option value="Balai Sungai Kunjang" {% if unit_filter == "Balai Sungai Kunjang" %}selected{% endif %}>Balai Sungai Kunjang</option>
+                        <option value="Balai Sungai Pinang" {% if unit_filter == "Balai Sungai Pinang" %}selected{% endif %}>Balai Sungai Pinang</option>
+                    </select>
+                </form>
 
-                {% if unit_filter %}
-                    <ul class="list-group list-group-flush" style="max-height: 260px; overflow-y: auto;">
-                        {% for stok in stok_unit_terpilih %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div class="fw-semibold small">{{ stok.nama_barang }}</div>
+                <div style="max-height: 380px; overflow-y: auto;">
+                    {% for stok in stok_unit_terpilih %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="d-flex align-items-center gap-2">
+                                {% if stok.kategori == 'atk' %}
+                                    <span class="badge bg-primary">ATK</span>
+                                {% else %}
+                                    <span class="badge" style="background-color:#F3E8FF; color:#7C3AED;">BHP</span>
+                                {% endif %}
+                                <span class="fw-semibold small">{{ stok.nama_barang }}</span>
+                            </div>
                             <span class="fw-bold small">{{ stok.stok }} {{ stok.get_satuan_display }}</span>
-                        </li>
-                        {% empty %}
-                        <li class="list-group-item text-muted small px-0">Unit ini belum punya data stok.</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted small mb-0">Pilih Balai/Bidang untuk melihat stok mereka.</p>
-                {% endif %}
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar {% if stok.status_stok == 'habis' %}bg-danger{% elif stok.status_stok == 'menipis' %}bg-warning{% else %}bg-success{% endif %}"
+                                 style="width: {% if stok.status_stok == 'habis' %}5{% elif stok.status_stok == 'menipis' %}50{% else %}100{% endif %}%;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="text-muted" style="font-size:.7rem;">Min: 10</span>
+                            <span class="small fw-semibold {% if stok.status_stok == 'habis' %}text-danger{% elif stok.status_stok == 'menipis' %}text-warning{% else %}text-success{% endif %}">
+                                {% if stok.status_stok == 'habis' %}Habis{% elif stok.status_stok == 'menipis' %}Menipis{% else %}Normal{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small mb-0">Unit ini belum punya data stok.</p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-{% block extra_js %}
-<script>
-    document.getElementById('id_unit_filter').addEventListener('change', function () {
-        document.getElementById('formFilterUnit').submit();
-    });
-</script>
 {% endblock %}
 
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    // Tab switching
+    document.querySelectorAll('#dashTabs .nav-link').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('#dashTabs .nav-link').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('d-none'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.remove('d-none');
+        });
+    });
+
+    // Bar chart: Top 5 stok barang
+    new Chart(document.getElementById('chartStokBarang'), {
+        type: 'bar',
+        data: {
+            labels: [{% for b in top_barang %}"{{ b.nama_barang }}",{% endfor %}],
+            datasets: [{
+                data: [{% for b in top_barang %}{{ b.stok }},{% endfor %}],
+                backgroundColor: [
+                    {% for b in top_barang %}
+                        {% if b.status_stok == 'habis' %}'#EF4444'{% elif b.status_stok == 'menipis' %}'#F59E0B'{% else %}'#2F5FD6'{% endif %},
+                    {% endfor %}
+                ],
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+
+    // Donut: Status Permintaan ATK
+    new Chart(document.getElementById('chartStatusAtk'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Menunggu', 'Disetujui', 'Ditolak'],
+            datasets: [{
+                data: [{{ atk_diajukan }}, {{ atk_disetujui }}, {{ atk_ditolak }}],
+                backgroundColor: ['#F59E0B', '#2F5FD6', '#22C55E'],
+                borderWidth: 0,
+            }]
+        },
+        options: { cutout: '65%',
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } } }
+    });
+
+    // Donut: Status Permintaan Service
+    new Chart(document.getElementById('chartStatusService'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Menunggu', 'Disetujui', 'Ditolak'],
+            datasets: [{
+                data: [{{ service_diajukan }}, {{ service_disetujui }}, {{ service_ditolak }}],
+                backgroundColor: ['#F59E0B', '#2F5FD6', '#22C55E'],
+                borderWidth: 0,
+            }]
+        },
+        options: { cutout: '65%',
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } } }
+    });
+</script>
 {% endblock %}
