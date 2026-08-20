@@ -8,8 +8,8 @@ class AssetForm(forms.ModelForm):
         fields = [
             'kategori', 'kode_barang', 'nama_barang', 'merk_type', 'jumlah', 'harga_satuan',
             'kondisi', 'lokasi', 'pengguna', 'keterangan',
-            'register', 'tahun_pembelian', 'nomor_identitas',
-        ]
+            'register', 'tahun_pembelian', 'nomor_identitas', 'tanggal_jatuh_tempo_pajak',
+            ]
         widgets = {
             'kategori': forms.Select(attrs={'class': 'd-none'}),
             'kode_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1.1.1.11.111.111.111'}),
@@ -24,6 +24,7 @@ class AssetForm(forms.ModelForm):
             'register': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: 000002'}),
             'tahun_pembelian': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: 2024'}),
             'nomor_identitas': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'No. Sertifikat/Pabrik/Chasis/Mesin (khusus kendaraan)'}),
+            'tanggal_jatuh_tempo_pajak': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
     def clean_kode_barang(self):

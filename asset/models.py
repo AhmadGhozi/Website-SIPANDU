@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date, timedelta
 
 
 class Asset(models.Model):
@@ -61,6 +62,8 @@ class Asset(models.Model):
     dibuat_pada = models.DateTimeField(auto_now_add=True)
     diperbarui_pada = models.DateTimeField(auto_now=True)
 
+    tanggal_jatuh_tempo_pajak = models.DateField(blank=True, null=True, verbose_name="Tanggal Jatuh Tempo Pajak")
+
     class Meta:
         ordering = ['kode_barang']
         verbose_name = "Asset"
@@ -72,6 +75,43 @@ class Asset(models.Model):
     @property
     def total_nilai(self):
         return self.jumlah * self.harga_satuan
+
+    @property
+    def status_ganti_oli(self):
+        riwayat_oli = self.riwayat_service.filter(jenis_service__icontains='oli').order_by('-tanggal').first()
+        if not riwayat_oli:
+            return {'status': 'belum_ada', 'terakhir': None, 'berikutnya': None}
+        
+        berikutnya = riwayat_oli.tanggal + timedelta(days=182)
+        hari_ini = date.today()
+        selisih = (berikutnya - hari_ini).days
+
+        if selisih < 0:
+            status = 'terlambat'
+        elif selisih <= 30:
+            status = 'mendekati'
+        else:
+            status = 'aman'
+
+        return {'status': status, 'terakhir': riwayat_oli.tanggal, 'berikutnya': berikutnya}
+
+
+    @property
+    def status_pajak(self):
+        if not self.tanggal_jatuh_tempo_pajak:
+            return {'status': 'belum_diisi'}
+
+        hari_ini = date.today()
+        selisih = (self.tanggal_jatuh_tempo_pajak - hari_ini).days
+
+        if selisih < 0:
+            status = 'terlambat'
+        elif selisih <= 30:
+            status = 'mendekati'
+        else:
+            status = 'aman'
+
+        return {'status': status}
 
 class PermintaanService(models.Model):
     STATUS_CHOICES = [

@@ -354,3 +354,36 @@ def permintaan_service_delete(request, pk):
         return redirect('asset:permintaan_service_list')
 
     return redirect('asset:permintaan_service_detail', pk=permintaan.pk)
+
+def is_umum_or_kasubag(user):
+    profile = getattr(user, 'profile', None)
+    if not profile:
+        return False
+    return profile.jenis_akun == 'umum' or profile.role == 'kasubag_umum'
+
+
+@login_required
+def perencanaan_service_list(request):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+
+    kendaraan = Asset.objects.filter(kategori='kendaraan')
+
+    data = []
+    for asset in kendaraan:
+        data.append({
+            'asset': asset,
+            'oli': asset.status_ganti_oli,
+            'pajak': asset.status_pajak,
+        })
+
+    context = {
+        'data': data,
+        'total_kendaraan': kendaraan.count(),
+        'total_perlu_perhatian': sum(
+            1 for d in data
+            if d['oli']['status'] in ['mendekati', 'terlambat'] or d['pajak']['status'] in ['mendekati', 'terlambat']
+        ),
+    }
+    return render(request, 'asset/perencanaan_service_list.html', context)
