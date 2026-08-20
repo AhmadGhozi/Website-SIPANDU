@@ -27,14 +27,19 @@ class AssetForm(forms.ModelForm):
             'tanggal_jatuh_tempo_pajak': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
-    def clean_kode_barang(self):
-        kode_barang = self.cleaned_data['kode_barang']
-        qs = Asset.objects.filter(kode_barang=kode_barang)
-        if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
-        if qs.exists():
-            raise forms.ValidationError('Kode barang ini sudah digunakan. Silakan gunakan kode lain.')
-        return kode_barang
+    def clean(self):
+        cleaned_data = super().clean()
+        kode_barang = cleaned_data.get('kode_barang')
+        register = cleaned_data.get('register')
+
+        if kode_barang and register:
+            qs = Asset.objects.filter(kode_barang=kode_barang, register=register)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+                if qs.exists():
+                    self.add_error('register', 'Kombinasi Kode Barang + Register ini sudah digunakan pada asset lain.')
+                    
+                    return cleaned_data
 
 
 class PermintaanServiceForm(forms.Form):

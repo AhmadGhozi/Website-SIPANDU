@@ -286,10 +286,26 @@
                     </a>
                     <div class="collapse submenu" id="menuAsset">
                         <ul class="nav flex-column">
-                            <li class="nav-item"><a href="{% url 'asset:asset_list' %}" class="nav-link">Manajemen
-                                    Asset</a></li>
-                            <li class="nav-item"><a href="{% url 'asset:permintaan_service_list' %}"
-                                    class="nav-link">Permintaan Service</a></li>
+                            <li class="nav-item"><a href="{% url 'asset:asset_list' %}" class="nav-link">Manajemen Asset</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuService">
+                        <i class="bi bi-tools me-2"></i> Service
+                        <i class="bi bi-chevron-down float-end small mt-1"></i>
+                    </a>
+                    <div class="collapse submenu" id="menuService">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a href="{% url 'asset:permintaan_service_list' %}" class="nav-link">Permintaan Service</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'dataservice:data_service_list' %}" class="nav-link">Data Service</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'asset:perencanaan_service_list' %}" class="nav-link">Perencanaan Service</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -322,12 +338,6 @@
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a href="{% url 'databarang:barang_list' %}" class="nav-link">Data Barang</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'dataservice:data_service_list' %}" class="nav-link">Data Service</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'asset:perencanaan_service_list' %}" class="nav-link">Perencanaan Service</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{% url 'pengguna:pengguna_list' %}" class="nav-link">Pengguna</a>

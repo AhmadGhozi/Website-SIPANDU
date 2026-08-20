@@ -45,7 +45,7 @@ class Asset(models.Model):
 ]
 
     kategori = models.CharField(max_length=15, choices=KATEGORI_CHOICES, default='lainnya')
-    kode_barang = models.CharField(max_length=30, unique=True, verbose_name="Kode Barang")
+    kode_barang = models.CharField(max_length=30, verbose_name="Kode Barang")
     nama_barang = models.CharField(max_length=150, verbose_name="Nama Barang")
     merk_type = models.CharField(max_length=150, verbose_name="Merk / Type")
     jumlah = models.PositiveIntegerField(default=0)
@@ -68,6 +68,7 @@ class Asset(models.Model):
         ordering = ['kode_barang']
         verbose_name = "Asset"
         verbose_name_plural = "Asset"
+        unique_together = ['kode_barang', 'register']
 
     def __str__(self):
         return f"{self.kode_barang} - {self.nama_barang}"
