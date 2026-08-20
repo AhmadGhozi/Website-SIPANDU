@@ -10,8 +10,18 @@ from dashboard.models import ActivityLog
 def is_kasubag_umum(user):
     return hasattr(user, 'profile') and user.profile.role == 'kasubag_umum'
 
+def is_umum_or_kasubag(user):
+    profile = getattr(user, 'profile', None)
+    if not profile:
+        return False
+    return profile.jenis_akun == 'umum' or profile.role == 'kasubag_umum'
+
 @login_required
 def barang_list(request):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+    
     query = request.GET.get('q', '')
     kategori = request.GET.get('kategori', '')
     daftar_barang = BarangATK.objects.all()
@@ -37,6 +47,10 @@ def barang_list(request):
 
 @login_required
 def barang_create(request):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         form = BarangATKForm(request.POST)
         if form.is_valid():
@@ -57,6 +71,10 @@ def barang_create(request):
 
 @login_required
 def barang_update(request, pk):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+    
     barang = get_object_or_404(BarangATK, pk=pk)
     if request.method == 'POST':
         form = BarangATKForm(request.POST, instance=barang)
@@ -78,6 +96,10 @@ def barang_update(request, pk):
 
 @login_required
 def barang_delete(request, pk):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+    
     barang = get_object_or_404(BarangATK, pk=pk)
     if request.method == 'POST':
         ActivityLog.objects.create(

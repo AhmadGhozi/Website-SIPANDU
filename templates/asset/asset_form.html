@@ -38,6 +38,21 @@
                 {% csrf_token %}
 
                 <div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold mb-1">Kategori</label>
+                        <div class="custom-select-wrap" data-target="id_kategori">
+                            <div class="custom-select-toggle form-control">
+                                <span class="custom-select-label">Lainnya</span>
+                                <i class="bi bi-chevron-down small"></i>
+                            </div>
+                            <div class="custom-select-menu">
+                                <div class="custom-select-option" data-value="kendaraan">Kendaraan</div>
+                                <div class="custom-select-option" data-value="elektronik">Elektronik</div>
+                                <div class="custom-select-option" data-value="lainnya">Lainnya</div>
+                            </div>
+                        </div>
+                        {{ form.kategori }}
+                    </div>
                     <div class="row g-2 mb-2">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Kode Barang *</label>

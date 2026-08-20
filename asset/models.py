@@ -9,6 +9,12 @@ class Asset(models.Model):
         ('rusak', 'Rusak'),
     ]
 
+    KATEGORI_CHOICES = [
+        ('kendaraan', 'Kendaraan'),
+        ('elektronik', 'Elektronik'),
+        ('lainnya', 'Lainnya'),
+    ]
+
     LOKASI_CHOICES = [
         ('Ruang Tamu DPPKB', 'Ruang Tamu DPPKB'),
         ('Bagian Umum dan Kepegawaian DPPKB', 'Bagian Umum dan Kepegawaian DPPKB'),
@@ -37,6 +43,7 @@ class Asset(models.Model):
         ('Balai Sungai Pinang', 'Balai Sungai Pinang'),
 ]
 
+    kategori = models.CharField(max_length=15, choices=KATEGORI_CHOICES, default='lainnya')
     kode_barang = models.CharField(max_length=30, unique=True, verbose_name="Kode Barang")
     nama_barang = models.CharField(max_length=150, verbose_name="Nama Barang")
     merk_type = models.CharField(max_length=150, verbose_name="Merk / Type")
@@ -49,10 +56,7 @@ class Asset(models.Model):
 
     register = models.CharField(max_length=20, blank=True, verbose_name="Register")
     tahun_pembelian = models.PositiveIntegerField(blank=True, null=True, verbose_name="Tahun Pembelian")
-    nomor_identitas = models.CharField(
-        max_length=255, blank=True,
-        verbose_name="No. Sertifikat/Pabrik/Chasis/Mesin"
-    )
+    nomor_identitas = models.CharField(max_length=255, blank=True, verbose_name="No. Sertifikat/Pabrik/Chasis/Mesin")
 
     dibuat_pada = models.DateTimeField(auto_now_add=True)
     diperbarui_pada = models.DateTimeField(auto_now=True)

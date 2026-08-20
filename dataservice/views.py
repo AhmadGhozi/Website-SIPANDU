@@ -1,12 +1,23 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.db.models import Q, Sum, Count
 from django.db.models.functions import TruncMonth
 from asset.models import RiwayatService
 
 
+def is_umum_or_kasubag(user):
+    profile = getattr(user, 'profile', None)
+    if not profile:
+        return False
+    return profile.jenis_akun == 'umum' or profile.role == 'kasubag_umum'
+
 @login_required
 def data_service_list(request):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+    
     query = request.GET.get('q', '')
     jenis_filter = request.GET.get('jenis', '')
 

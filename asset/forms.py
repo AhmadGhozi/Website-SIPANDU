@@ -6,11 +6,12 @@ class AssetForm(forms.ModelForm):
     class Meta:
         model = Asset
         fields = [
-            'kode_barang', 'nama_barang', 'merk_type', 'jumlah', 'harga_satuan',
+            'kategori', 'kode_barang', 'nama_barang', 'merk_type', 'jumlah', 'harga_satuan',
             'kondisi', 'lokasi', 'pengguna', 'keterangan',
             'register', 'tahun_pembelian', 'nomor_identitas',
         ]
         widgets = {
+            'kategori': forms.Select(attrs={'class': 'd-none'}),
             'kode_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1.1.1.11.111.111.111'}),
             'nama_barang': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Masukkan nama asset'}),
             'merk_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Dell / Latitude 5520'}),
