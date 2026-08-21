@@ -236,8 +236,11 @@
             {% if request.user.profile.jenis_akun == 'balai' or request.user.profile.jenis_akun == 'bidang' %}
 
             <!-- ============ SIDEBAR KHUSUS BALAI/BIDANG ============ -->
-             <div class="section-label">{{ request.user.profile.unit_kerja }}</div>
-             <ul class="nav nav-pills flex-column mb-2">
+             <div class="px-2 pt-2 pb-1 text-white-50" style="font-size: .65rem; letter-spacing: .05em; text-transform: uppercase;">
+                {{ request.user.profile.unit_kerja }}
+            </div>
+            <div class="section-label">Menu Utama</div>
+            <ul class="nav nav-pills flex-column mb-2">
                 <li class="nav-item">
                     <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                         <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
@@ -249,20 +252,21 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'databarang:stok_unit_list' %}"
-                        class="nav-link {% if 'stok-unit' in request.path %}active{% endif %}">
+                    <a href="{% url 'databarang:stok_unit_list' %}" class="nav-link {% if 'stok-unit' in request.path %}active{% endif %}">
                         <i class="bi bi-box-seam me-2"></i> Stok Barang
                     </a>
                 </li>
+            </ul>
+            
+            <div class="section-label">Permintaan</div>
+            <ul class="nav nav-pills flex-column mb-2">
                 <li class="nav-item">
-                    <a href="{% url 'databarang:permintaan_dinas_list' %}"
-                        class="nav-link {% if 'permintaan-dinas' in request.path %}active{% endif %}">
+                    <a href="{% url 'databarang:permintaan_dinas_list' %}" class="nav-link {% if 'permintaan-dinas' in request.path %}active{% endif %}">
                         <i class="bi bi-send me-2"></i> Permintaan Ke Dinas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'asset:permintaan_service_list' %}"
-                        class="nav-link {% if 'permintaan-service' in request.path %}active{% endif %}">
+                    <a href="{% url 'asset:permintaan_service_list' %}" class="nav-link {% if 'permintaan-service' in request.path %}active{% endif %}">
                         <i class="bi bi-tools me-2"></i> Permintaan Service
                     </a>
                 </li>
