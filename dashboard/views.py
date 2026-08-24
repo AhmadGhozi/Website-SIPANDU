@@ -69,13 +69,24 @@ def dashboard(request):
         stok_unit = StokUnit.objects.filter(unit_kerja=profile.unit_kerja)
         stok_pusat = BarangATK.objects.all()
 
+        total_stok_unit = stok_unit.count()
+        stok_unit_menipis = stok_unit.filter(stok__gt=0, stok__lt=10)
+        stok_unit_habis = stok_unit.filter(stok=0)
+
+        perlu_restock = (stok_unit_menipis | stok_unit_habis).order_by('stok')[:8]
+
+        total_aman = total_stok_unit - stok_unit_menipis.count() - stok_unit_habis.count()
+
         context = {
             'unit_kerja': profile.unit_kerja,
-            'total_stok_unit': stok_unit.count(),
-            'stok_unit_menipis': stok_unit.filter(stok__gt=0, stok__lt=10).count(),
-            'stok_unit_habis': stok_unit.filter(stok=0).count(),
+            'total_stok_unit': total_stok_unit,
+            'stok_unit_menipis': stok_unit_menipis.count(),
+            'stok_unit_habis': stok_unit_habis.count(),
             'daftar_stok_unit': stok_unit[:5],
             'daftar_stok_pusat': stok_pusat[:8],
+
+            'perlu_restock': perlu_restock,
+            'total_aman': total_aman,
         }
         return render(request, 'dashboard_unit.html', context)
 

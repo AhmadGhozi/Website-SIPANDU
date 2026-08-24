@@ -109,4 +109,89 @@
     </div>
 </div>
 
+<!-- CHARTS -->
+<div class="row g-3 mt-1">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="fw-bold">Barang Perlu Direstock</div>
+                <div class="text-muted small mb-3">Stok menipis atau habis di {{ unit_kerja }}</div>
+                <div style="height: 240px;">
+                    <canvas id="chartRestock"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="fw-bold text-start">Status Stok</div>
+                <div class="text-muted small mb-3 text-start">Distribusi kondisi barang</div>
+                <div style="height: 200px;">
+                    <canvas id="chartStatusStok"></canvas>
+                </div>
+                <div class="d-flex flex-column gap-2 mt-3 text-start">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="d-flex align-items-center gap-2 small"><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#22C55E;"></span> Stok Aman</span>
+                        <span class="fw-semibold">{{ total_aman }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="d-flex align-items-center gap-2 small"><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#F59E0B;"></span> Menipis</span>
+                        <span class="fw-semibold">{{ stok_unit_menipis }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="d-flex align-items-center gap-2 small"><span class="rounded-circle d-inline-block" style="width:8px;height:8px;background:#EF4444;"></span> Habis</span>
+                        <span class="fw-semibold">{{ stok_unit_habis }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    // Bar chart: Barang Perlu Direstock
+    new Chart(document.getElementById('chartRestock'), {
+        type: 'bar',
+        data: {
+            labels: [{% for s in perlu_restock %}"{{ s.nama_barang }}",{% endfor %}],
+            datasets: [{
+                data: [{% for s in perlu_restock %}{{ s.stok }},{% endfor %}],
+                backgroundColor: [
+                    {% for s in perlu_restock %}
+                        {% if s.stok == 0 %}'#EF4444'{% else %}'#F59E0B'{% endif %},
+                    {% endfor %}
+                ],
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Donut chart: Status Stok
+    new Chart(document.getElementById('chartStatusStok'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Aman', 'Menipis', 'Habis'],
+            datasets: [{
+                data: [{{ total_aman }}, {{ stok_unit_menipis }}, {{ stok_unit_habis }}],
+                backgroundColor: ['#22C55E', '#F59E0B', '#EF4444'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
 {% endblock %}
