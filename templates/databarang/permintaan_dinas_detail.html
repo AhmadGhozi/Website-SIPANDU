@@ -13,62 +13,88 @@
 
 <div class="d-flex justify-content-center">
     <div class="card border-0 shadow-sm w-100" style="max-width: 700px;">
-        <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h5 class="fw-bold mb-1">{{ permintaan.nomor }}</h5>
-                    <span class="text-muted small">{{ permintaan.unit_kerja }}</span>
+
+        <!-- Header -->
+        <div class="card-body border-bottom p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width:42px;height:42px;background-color: var(--navy);">
+                        <i class="bi bi-send text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">{{ permintaan.nomor }}</h5>
+                        <span class="text-muted small">{{ permintaan.unit_kerja }}</span>
+                    </div>
                 </div>
                 <span class="badge {{ permintaan.badge_class }} px-3 py-2">{{ permintaan.get_status_display }}</span>
             </div>
+        </div>
 
-            <div class="row g-0 mb-3">
-                <div class="col-6 py-2 border-bottom border-end pe-3">
-                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Diajukan Oleh</div>
-                    <div class="fw-semibold">{{ permintaan.diajukan_oleh.username|default:"-" }}</div>
+        <div class="card-body p-4">
+            <!-- Info grid -->
+            <div class="row g-0 mb-4">
+                <div class="col-md-6 d-flex gap-2 py-3 border-bottom border-end pe-3">
+                    <i class="bi bi-person-fill text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Diajukan Oleh</div>
+                        <div class="fw-semibold">{{ permintaan.diajukan_oleh.username|default:"-" }}</div>
+                    </div>
                 </div>
-                <div class="col-6 py-2 border-bottom ps-3">
-                    <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tanggal Diajukan</div>
-                    <div class="fw-semibold">{{ permintaan.diajukan_pada|date:"d M Y, H:i" }}</div>
+                <div class="col-md-6 d-flex gap-2 py-3 border-bottom ps-md-3">
+                    <i class="bi bi-calendar-event text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tanggal Diajukan</div>
+                        <div class="fw-semibold">{{ permintaan.diajukan_pada|date:"d M Y, H:i" }}</div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Daftar Barang -->
             <div class="fw-bold mb-2">Daftar Barang</div>
-            <div class="table-responsive mb-3">
-                <table class="table table-sm">
+            <div class="table-responsive mb-4">
+                <table class="table align-middle mb-0">
                     <thead>
-                        <tr class="text-muted small text-uppercase">
-                            <th>Barang</th>
+                        <tr class="text-muted small text-uppercase" style="font-size:.7rem;">
+                            <th class="ps-0">Barang</th>
                             <th>Jumlah</th>
-                            <th>Stok Pusat Saat Ini</th>
+                            <th class="text-end pe-0">Stok Pusat Saat Ini</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in permintaan.items.all %}
-                        <tr>
-                            <td>{{ item.barang.nama_barang }}</td>
-                            <td>{{ item.jumlah }} {{ item.barang.get_satuan_display }}</td>
-                            <td class="text-muted">{{ item.barang.stok }} {{ item.barang.get_satuan_display }}</td>
+                        <tr style="border-bottom: 1px solid #F0F1F5;">
+                            <td class="ps-0 fw-semibold">{{ item.barang.nama_barang }}</td>
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary">{{ item.jumlah }} {{ item.barang.get_satuan_display }}</span>
+                            </td>
+                            <td class="text-end pe-0 text-muted">{{ item.barang.stok }} {{ item.barang.get_satuan_display }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
 
+            <!-- Status proses -->
             {% if permintaan.status != 'diajukan' %}
-            <div class="rounded p-3 mb-3" style="background-color: #F4F6FB;">
-                <div class="small">
-                    Diproses oleh <strong>{{ permintaan.diproses_oleh.username }}</strong>
-                    pada {{ permintaan.diproses_pada|date:"d M Y, H:i" }}
+            <div class="rounded p-3 mb-3 d-flex align-items-start gap-2" style="background-color: #F4F6FB;">
+                <i class="bi bi-info-circle-fill text-muted mt-1"></i>
+                <div>
+                    <div class="small">
+                        Diproses oleh <strong>{{ permintaan.diproses_oleh.username }}</strong>
+                        pada {{ permintaan.diproses_pada|date:"d M Y, H:i" }}
+                    </div>
+                    {% if permintaan.catatan_approval %}
+                        <div class="small text-muted mt-1">Catatan: {{ permintaan.catatan_approval }}</div>
+                    {% endif %}
                 </div>
-                {% if permintaan.catatan_approval %}
-                    <div class="small text-muted mt-1">Catatan: {{ permintaan.catatan_approval }}</div>
-                {% endif %}
             </div>
             {% endif %}
 
+            <!-- Form approval -->
             {% if permintaan.status == 'diajukan' and is_approver %}
             <hr>
+            <div class="fw-bold mb-3">Proses Permintaan</div>
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">

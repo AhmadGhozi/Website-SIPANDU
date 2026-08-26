@@ -13,9 +13,11 @@
 
 <div class="d-flex justify-content-center">
     <div class="card border-0 shadow-sm w-100" style="max-width: 780px;">
+
         <div class="card-body border-bottom p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="rounded d-flex align-items-center justify-content-center bg-primary" style="width: 38px; height: 38px;">
+                <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0 bg-primary"
+                     style="width: 38px; height: 38px;">
                     <i class="bi bi-send text-white"></i>
                 </div>
                 <div>
@@ -29,17 +31,39 @@
             <form method="post" id="formPermintaan">
                 {% csrf_token %}
 
+                <div class="row g-2 mb-1">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">Barang</label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold mb-1">Jumlah</label>
+                    </div>
+                </div>
+
                 <div id="itemContainer">
                     <div class="row g-2 mb-2 item-row">
-                        <div class="col-md-7">
-                            <select name="barang_id" class="form-select">
+                        <div class="col-md-6">
+                            <div class="custom-select-wrap" data-target="id_barang_0">
+                                <div class="custom-select-toggle form-control">
+                                    <span class="custom-select-label">-- Pilih Barang --</span>
+                                    <i class="bi bi-chevron-down small"></i>
+                                </div>
+                                <div class="custom-select-menu scrollable-5">
+                                    {% for barang in daftar_barang %}
+                                    <div class="custom-select-option" data-value="{{ barang.pk }}">
+                                        {{ barang.nama_barang }} (Stok: {{ barang.stok }} {{ barang.get_satuan_display }})
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <select name="barang_id" id="id_barang_0" class="d-none">
                                 <option value="">-- Pilih Barang --</option>
                                 {% for barang in daftar_barang %}
                                 <option value="{{ barang.pk }}">{{ barang.nama_barang }} (Stok: {{ barang.stok }} {{ barang.get_satuan_display }})</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <input type="number" name="jumlah" class="form-control" placeholder="Jumlah" min="1">
                         </div>
                         <div class="col-md-2">
@@ -69,13 +93,59 @@
 
 {% block extra_js %}
 <script>
+    let rowIndex = 1;
+
+    function initRowDropdown(wrap) {
+        const select = document.getElementById(wrap.dataset.target);
+        if (!select) return;
+
+        const toggle = wrap.querySelector('.custom-select-toggle');
+        const label = wrap.querySelector('.custom-select-label');
+        const menu = wrap.querySelector('.custom-select-menu');
+        const options = wrap.querySelectorAll('.custom-select-option');
+
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            document.querySelectorAll('.custom-select-menu.show').forEach(function (m) {
+                if (m !== menu) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+        });
+
+        options.forEach(function (opt) {
+            opt.addEventListener('click', function () {
+                select.value = opt.dataset.value;
+                select.dispatchEvent(new Event('change'));
+                label.textContent = opt.textContent;
+                options.forEach(function (o) { o.classList.remove('active'); });
+                opt.classList.add('active');
+                menu.classList.remove('show');
+            });
+        });
+    }
+
     document.getElementById('btnAddRow').addEventListener('click', function () {
         const container = document.getElementById('itemContainer');
         const firstRow = container.querySelector('.item-row');
         const newRow = firstRow.cloneNode(true);
-        newRow.querySelector('select').value = '';
-        newRow.querySelector('input').value = '';
+
+        const wrap = newRow.querySelector('.custom-select-wrap');
+        const select = newRow.querySelector('select');
+        const input = newRow.querySelector('input[type="number"]');
+        const label = newRow.querySelector('.custom-select-label');
+
+        const newId = 'id_barang_' + rowIndex;
+        rowIndex++;
+
+        wrap.setAttribute('data-target', newId);
+        select.id = newId;
+        select.value = '';
+        input.value = '';
+        label.textContent = '-- Pilih Barang --';
+        newRow.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('active'));
+
         container.appendChild(newRow);
+        initRowDropdown(wrap);
     });
 
     document.getElementById('itemContainer').addEventListener('click', function (e) {
