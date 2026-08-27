@@ -288,9 +288,13 @@
                         <i class="bi bi-box-seam me-2"></i> Asset
                         <i class="bi bi-chevron-down float-end small mt-1"></i>
                     </a>
-                    <div class="collapse submenu" id="menuAsset">
+                    <div class="collapse submenu {% if 'asset' in request.path and 'permintaan-service' not in request.path and 'perencanaan-service' not in request.path %}show{% endif %}" id="menuAsset">
                         <ul class="nav flex-column">
-                            <li class="nav-item"><a href="{% url 'asset:asset_list' %}" class="nav-link">Manajemen Asset</a></li>
+                            <li class="nav-item">
+                                <a href="{% url 'asset:asset_list' %}" class="nav-link {% if 'asset' in request.path and 'permintaan-service' not in request.path and 'perencanaan-service' not in request.path %}active{% endif %}">
+                                    Manajemen Asset
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -299,16 +303,22 @@
                         <i class="bi bi-tools me-2"></i> Service
                         <i class="bi bi-chevron-down float-end small mt-1"></i>
                     </a>
-                    <div class="collapse submenu" id="menuService">
+                    <div class="collapse submenu {% if 'permintaan-service' in request.path or 'perencanaan-service' in request.path or 'dataservice' in request.path %}show{% endif %}" id="menuService">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a href="{% url 'asset:permintaan_service_list' %}" class="nav-link">Permintaan Service</a>
+                                <a href="{% url 'asset:permintaan_service_list' %}" class="nav-link {% if 'permintaan-service' in request.path %}active{% endif %}">
+                                    Permintaan Service
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'dataservice:data_service_list' %}" class="nav-link">Data Service</a>
+                                <a href="{% url 'dataservice:data_service_list' %}" class="nav-link {% if 'dataservice' in request.path %}active{% endif %}">
+                                    Data Service
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'asset:perencanaan_service_list' %}" class="nav-link">Perencanaan Service</a>
+                                <a href="{% url 'asset:perencanaan_service_list' %}" class="nav-link {% if 'perencanaan-service' in request.path %}active{% endif %}">
+                                    Perencanaan Service
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -340,13 +350,17 @@
                         <i class="bi bi-gear-fill me-2"></i> Pengaturan
                         <i class="bi bi-chevron-down float-end small mt-1"></i>
                     </a>
-                    <div class="collapse submenu" id="menuPengaturan">
+                    <div class="collapse submenu {% if 'databarang' in request.path or 'pengguna' in request.path %}show{% endif %}" id="menuPengaturan">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a href="{% url 'databarang:barang_list' %}" class="nav-link">Data Barang</a>
+                                <a href="{% url 'databarang:barang_list' %}" class="nav-link {% if 'databarang' in request.path and 'stok-unit' not in request.path and 'permintaan-dinas' not in request.path %}active{% endif %}">
+                                    Data Barang
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'pengguna:pengguna_list' %}" class="nav-link">Pengguna</a>
+                                <a href="{% url 'pengguna:pengguna_list' %}" class="nav-link {% if 'pengguna' in request.path %}active{% endif %}">
+                                    Pengguna
+                                </a>
                             </li>
                         </ul>
                     </div>
