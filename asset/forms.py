@@ -1,5 +1,5 @@
 from django import forms
-from .models import Asset, RiwayatService, PermintaanService
+from .models import Asset, RiwayatService, PermintaanService, PindahTanganAsset
 
 
 class AssetForm(forms.ModelForm):
@@ -111,3 +111,12 @@ class ApprovalServiceForm(forms.Form):
         required=False,
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Catatan (opsional)'})
     )
+    
+class PindahTanganForm(forms.ModelForm):
+    class Meta:
+        model = PindahTanganAsset
+        fields = ['nama_pihak_kedua', 'lokasi_pihak_kedua']
+        widgets = {
+            'nama_pihak_kedua': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama penerima'}),
+            'lokasi_pihak_kedua': forms.Select(attrs={'class': 'd-none'}),
+        }

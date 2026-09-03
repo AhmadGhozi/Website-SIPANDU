@@ -12,11 +12,16 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas as pdf_canvas
 from dashboard.models import ActivityLog
-from .models import Asset, RiwayatService, PermintaanService
-from .forms import AssetForm, PermintaanServiceForm, ApprovalServiceForm, EditPermintaanServiceForm
+from .models import Asset, RiwayatService, PermintaanService, PindahTanganAsset
+from .forms import AssetForm, PermintaanServiceForm, ApprovalServiceForm, EditPermintaanServiceForm, PindahTanganForm
 
 @login_required
 def asset_list(request):
@@ -112,7 +117,7 @@ def asset_delete(request, pk):
 @login_required
 def asset_detail(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
-    return render(request, 'asset/asset_detail.html', {'asset': asset})
+    return render(request, 'asset/asset_detail.html', {'asset': asset, 'is_admin': is_admin(request.user)})
 
 def asset_public_detail(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
@@ -387,3 +392,165 @@ def perencanaan_service_list(request):
         ),
     }
     return render(request, 'asset/perencanaan_service_list.html', context)
+
+def is_admin(user):
+    return hasattr(user, 'profile') and user.profile.role == 'admin'
+
+@login_required
+def pindah_tangan_create(request, pk):
+    if not is_admin(request.user):
+        messages.error(request, 'Hanya Admin yang dapat memproses pindah tangan asset.')
+        return redirect('asset:asset_detail', pk=pk)
+
+    asset = get_object_or_404(Asset, pk=pk)
+
+    if request.method == 'POST':
+        form = PindahTanganForm(request.POST)
+        if form.is_valid():
+            pt = form.save(commit=False)
+            pt.asset = asset
+            pt.nama_pihak_pertama = asset.pengguna
+            pt.lokasi_pihak_pertama = asset.lokasi
+            pt.diajukan_oleh = request.user
+            pt.save()
+            messages.success(request, 'Pengajuan pindah tangan berhasil dikirim, menunggu persetujuan Kasubag Umum.')
+            return redirect('asset:pindah_tangan_list')
+    else:
+        form = PindahTanganForm()
+
+    return render(request, 'asset/pindah_tangan_form.html', {'form': form, 'asset': asset})
+
+
+@login_required
+def pindah_tangan_list(request):
+    if not (is_admin(request.user) or is_kasubag_umum(request.user)):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+
+    daftar = PindahTanganAsset.objects.select_related('asset', 'diajukan_oleh').all()
+
+    context = {
+        'daftar': daftar,
+        'is_approver': is_kasubag_umum(request.user),
+        'total_diajukan': daftar.filter(status='diajukan').count(),
+        'total_disetujui': daftar.filter(status='disetujui').count(),
+        'total_ditolak': daftar.filter(status='ditolak').count(),
+    }
+    return render(request, 'asset/pindah_tangan_list.html', context)
+
+
+@login_required
+def pindah_tangan_detail(request, pk):
+    pt = get_object_or_404(PindahTanganAsset, pk=pk)
+    is_approver = is_kasubag_umum(request.user)
+
+    if request.method == 'POST':
+        if not is_approver:
+            messages.error(request, 'Anda tidak memiliki akses untuk memproses pengajuan ini.')
+            return redirect('asset:pindah_tangan_detail', pk=pt.pk)
+
+        aksi = request.POST.get('aksi')
+        catatan = request.POST.get('catatan_approval', '')
+
+        if aksi == 'tolak':
+            pt.status = 'ditolak'
+            pt.catatan_approval = catatan
+            pt.diproses_oleh = request.user
+            pt.diproses_pada = timezone.now()
+            pt.save()
+            messages.success(request, 'Pengajuan pindah tangan ditolak.')
+            return redirect('asset:pindah_tangan_list')
+
+        elif aksi == 'setuju':
+            asset = pt.asset
+            asset.pengguna = pt.nama_pihak_kedua
+            asset.lokasi = pt.lokasi_pihak_kedua
+            asset.save()
+
+            pt.status = 'disetujui'
+            pt.catatan_approval = catatan
+            pt.diproses_oleh = request.user
+            pt.diproses_pada = timezone.now()
+            pt.save()
+            messages.success(request, 'Pindah tangan disetujui. Berita Acara siap diunduh.')
+            return redirect('asset:pindah_tangan_detail', pk=pt.pk)
+
+    return render(request, 'asset/pindah_tangan_detail.html', {'pt': pt, 'is_approver': is_approver})
+
+
+@login_required
+def pindah_tangan_pdf(request, pk):
+    pt = get_object_or_404(PindahTanganAsset, pk=pk, status='disetujui')
+    asset = pt.asset
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('TitleCustom', parent=styles['Heading1'], alignment=TA_CENTER, fontSize=14)
+    normal_justify = ParagraphStyle('NormalJustify', parent=styles['Normal'], alignment=TA_JUSTIFY, fontSize=11, leading=16)
+
+    elements = []
+    elements.append(Paragraph("BERITA ACARA SERAH TERIMA BARANG", title_style))
+    elements.append(Spacer(1, 20))
+
+    tanggal_str = pt.diproses_pada.strftime('%A, %d %B %Y') if pt.diproses_pada else '-'
+    elements.append(Paragraph(f"Pada hari ini, {tanggal_str}, telah dilakukan serah terima barang sebagai berikut:", normal_justify))
+    elements.append(Spacer(1, 16))
+
+    elements.append(Paragraph("<b>PIHAK PERTAMA (Yang Menyerahkan):</b>", styles['Normal']))
+    elements.append(Paragraph(f"Nama&nbsp;&nbsp;&nbsp;: {pt.nama_pihak_pertama or '-'}", styles['Normal']))
+    elements.append(Paragraph(f"Lokasi&nbsp;&nbsp;: {pt.lokasi_pihak_pertama or '-'}", styles['Normal']))
+    elements.append(Spacer(1, 12))
+
+    elements.append(Paragraph("<b>PIHAK KEDUA (Yang Menerima):</b>", styles['Normal']))
+    elements.append(Paragraph(f"Nama&nbsp;&nbsp;&nbsp;: {pt.nama_pihak_kedua}", styles['Normal']))
+    elements.append(Paragraph(f"Lokasi&nbsp;&nbsp;: {pt.get_lokasi_pihak_kedua_display()}", styles['Normal']))
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph("Barang yang diserahterimakan:", styles['Normal']))
+    elements.append(Spacer(1, 8))
+
+    data_tabel = [
+        ['No', 'Nama Barang', 'Jumlah', 'Harga'],
+        ['1', asset.nama_barang, f"{asset.jumlah} unit", f"Rp {asset.harga_satuan:,.0f}".replace(',', '.')],
+    ]
+    tabel = Table(data_tabel, colWidths=[1.5*cm, 7*cm, 3*cm, 4*cm])
+    tabel.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1B2A52')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('ALIGN', (2, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(tabel)
+    elements.append(Spacer(1, 24))
+
+    elements.append(Paragraph(
+        "Demikian berita acara serah terima barang ini dibuat oleh kedua belah pihak, adapun "
+        "barang tersebut diserahkan dalam keadaan baik dan lengkap. Sejak penandatanganan berita "
+        "acara ini, barang tersebut menjadi tanggung jawab Pihak Kedua untuk dipelihara/dirawat "
+        "dengan baik serta dipergunakan sesuai keperluan.", normal_justify
+    ))
+    elements.append(Spacer(1, 40))
+
+    ttd_data = [['Yang Menyerahkan,', 'Yang Menerima,'], ['', ''], ['', ''],
+                [f"( {pt.nama_pihak_pertama or '.....................'} )", f"( {pt.nama_pihak_kedua} )"]]
+    ttd_table = Table(ttd_data, colWidths=[8*cm, 8*cm])
+    ttd_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('TOPPADDING', (0, 1), (-1, 2), 30),
+    ]))
+    elements.append(ttd_table)
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="BAST-{asset.kode_barang}-{pt.pk}.pdf"'
+    return response

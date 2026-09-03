@@ -19,4 +19,8 @@ urlpatterns = [
     path('permintaan-service/<int:pk>/edit/', views.permintaan_service_update, name='permintaan_service_update'),
     path('permintaan-service/<int:pk>/hapus/', views.permintaan_service_delete, name='permintaan_service_delete'),
     path('perencanaan-service/', views.perencanaan_service_list, name='perencanaan_service_list'),
+    path('<int:pk>/pindah-tangan/ajukan/', views.pindah_tangan_create, name='pindah_tangan_create'),
+    path('pindah-tangan/', views.pindah_tangan_list, name='pindah_tangan_list'),
+    path('pindah-tangan/<int:pk>/', views.pindah_tangan_detail, name='pindah_tangan_detail'),
+    path('pindah-tangan/<int:pk>/pdf/', views.pindah_tangan_pdf, name='pindah_tangan_pdf'),
 ]
