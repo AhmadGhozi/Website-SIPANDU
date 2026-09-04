@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -14,14 +16,67 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.units import cm
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas as pdf_canvas
 from dashboard.models import ActivityLog
 from .models import Asset, RiwayatService, PermintaanService, PindahTanganAsset
 from .forms import AssetForm, PermintaanServiceForm, ApprovalServiceForm, EditPermintaanServiceForm, PindahTanganForm
+
+def build_kop_surat(styles):
+    """
+    Mengembalikan list elemen reportlab (logo + teks instansi + garis pembatas)
+    untuk dipasang di bagian paling atas dokumen PDF.
+    """
+    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo_samarinda.png')
+
+    kop_normal = ParagraphStyle(
+        'KopNormal', parent=styles['Normal'],
+        alignment=TA_CENTER, fontSize=12, leading=14,
+    )
+    kop_bold = ParagraphStyle(
+        'KopBold', parent=styles['Normal'],
+        alignment=TA_CENTER, fontSize=11.5, leading=13, fontName='Helvetica-Bold',
+    )
+    kop_kecil = ParagraphStyle(
+        'KopKecil', parent=styles['Normal'],
+        alignment=TA_CENTER, fontSize=8.5, leading=11,
+    )
+
+    teks_kop = [
+        Paragraph("PEMERINTAH KOTA SAMARINDA", kop_normal),
+        Paragraph("DINAS PENGENDALIAN PENDUDUK DAN KELUARGA BERENCANA", kop_bold),
+        Paragraph("Jalan Milono No. 1 Kelurahan Bugis Kec. Samarinda Kota, Samarinda 75121", kop_kecil),
+        Paragraph("Website : dppkb.samarindakota.go.id &nbsp;&nbsp; Email. Dppkb.kotasmarinda2020@gmail.com", kop_kecil),
+    ]
+
+    if os.path.exists(logo_path):
+        logo = Image(logo_path, width=2.1*cm, height=2.1*cm)
+    else:
+        logo = Paragraph("", styles['Normal'])
+
+    kop_table = Table(
+        [[logo, teks_kop]],
+        colWidths=[2.5*cm, 14.5*cm],
+    )
+    kop_table.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+        ('LEFTPADDING', (0, 0), (0, 0), 0),
+        ('RIGHTPADDING', (1, 0), (1, 0), 0),
+    ]))
+
+    elements = [
+        kop_table,
+        Spacer(1, 8),
+        HRFlowable(width="100%", thickness=2, color=colors.black, spaceAfter=2),
+        HRFlowable(width="100%", thickness=0.75, color=colors.black, spaceAfter=4),
+        Spacer(1, 14),
+    ]
+    return elements
 
 @login_required
 def asset_list(request):
@@ -504,6 +559,7 @@ def pindah_tangan_pdf(request, pk):
     normal_justify = ParagraphStyle('NormalJustify', parent=styles['Normal'], alignment=TA_JUSTIFY, fontSize=11, leading=16)
 
     elements = []
+    elements.extend(build_kop_surat(styles))
     elements.append(Paragraph("BERITA ACARA SERAH TERIMA BARANG", title_style))
     elements.append(Spacer(1, 20))
 
