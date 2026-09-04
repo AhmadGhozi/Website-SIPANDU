@@ -344,7 +344,16 @@
                         <ul class="nav flex-column">
                             <li class="nav-item"><a href="#" class="nav-link">Nota Dinas</a></li>
                             <li class="nav-item"><a href="#" class="nav-link">Lembar Disposisi</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Surat Keluar/Masuk</a></li>
+                            <li class="nav-item">
+                                <a href="{% url 'persuratan:surat_masuk_list' %}" class="nav-link {% if 'surat-masuk' in request.path %}active{% endif %}">
+                                    Surat Masuk
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'persuratan:surat_keluar_list' %}" class="nav-link {% if 'surat-keluar' in request.path %}active{% endif %}">
+                                    Surat Keluar
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

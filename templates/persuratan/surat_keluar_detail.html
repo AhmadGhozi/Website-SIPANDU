@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Surat Keluar{% endblock %}
+{% block page_title %}Persuratan / Surat Keluar{% endblock %}
+
+{% block content %}
+
+<nav class="mb-3">
+    <a href="{% url 'persuratan:surat_keluar_list' %}" class="text-decoration-none fw-semibold text-primary">Surat Keluar</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">Detail</span>
+</nav>
+
+<div class="d-flex justify-content-center">
+    <div class="card border-0 shadow-sm w-100" style="max-width: 700px;">
+
+        <div class="card-body border-bottom p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width:42px;height:42px;background-color: var(--navy);">
+                        <i class="bi bi-send-fill text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">{{ surat.nomor_surat }}</h5>
+                        <span class="text-muted small">{{ surat.perihal }}</span>
+                    </div>
+                </div>
+                <span class="badge {{ surat.badge_sifat }} px-3 py-2">{{ surat.get_sifat_display }}</span>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row g-0 mb-3">
+                <div class="col-md-6 d-flex gap-2 py-3 border-bottom border-end pe-3">
+                    <i class="bi bi-hash text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Nomor Agenda</div>
+                        <div class="fw-semibold">{{ surat.nomor_agenda }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex gap-2 py-3 border-bottom ps-md-3">
+                    <i class="bi bi-building text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tujuan Surat</div>
+                        <div class="fw-semibold">{{ surat.tujuan_surat }}</div>
+                    </div>
+                </div>
+                <div class="col-12 d-flex gap-2 py-3 border-bottom">
+                    <i class="bi bi-calendar-event text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Tanggal Surat</div>
+                        <div class="fw-semibold">{{ surat.tanggal_surat|date:"d M Y" }}</div>
+                    </div>
+                </div>
+                <div class="col-12 d-flex gap-2 py-3 border-bottom">
+                    <i class="bi bi-person-fill text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Dibuat Oleh</div>
+                        <div class="fw-semibold">{{ surat.dibuat_oleh.username|default:"-" }} · {{ surat.dibuat_pada|date:"d M Y, H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {% if surat.file_scan %}
+            <a href="{{ surat.file_scan.url }}" target="_blank" class="btn btn-outline-primary w-100 mb-3">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Lihat File Surat
+            </a>
+            {% endif %}
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'persuratan:surat_keluar_list' %}" class="btn btn-light border px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Kembali
+                </a>
+                <a href="{% url 'persuratan:surat_keluar_update' surat.pk %}" class="btn btn-primary px-4">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
