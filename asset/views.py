@@ -441,6 +441,10 @@ def pindah_tangan_list(request):
 
 @login_required
 def pindah_tangan_detail(request, pk):
+    if not (is_admin(request.user) or is_kasubag_umum(request.user)):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+    
     pt = get_object_or_404(PindahTanganAsset, pk=pk)
     is_approver = is_kasubag_umum(request.user)
 
@@ -477,6 +481,15 @@ def pindah_tangan_detail(request, pk):
 
     return render(request, 'asset/pindah_tangan_detail.html', {'pt': pt, 'is_approver': is_approver})
 
+def format_tanggal_indonesia(tanggal):
+    hari_list = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+    bulan_list = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+
+    hari = hari_list[tanggal.weekday()]
+    bulan = bulan_list[tanggal.month - 1]
+
+    return f"{hari}, {tanggal.day:02d} {bulan} {tanggal.year}"
 
 @login_required
 def pindah_tangan_pdf(request, pk):
@@ -494,8 +507,8 @@ def pindah_tangan_pdf(request, pk):
     elements.append(Paragraph("BERITA ACARA SERAH TERIMA BARANG", title_style))
     elements.append(Spacer(1, 20))
 
-    tanggal_str = pt.diproses_pada.strftime('%A, %d %B %Y') if pt.diproses_pada else '-'
-    elements.append(Paragraph(f"Pada hari ini, {tanggal_str}, telah dilakukan serah terima barang sebagai berikut:", normal_justify))
+    tanggal_str = format_tanggal_indonesia(pt.diproses_pada) if pt.diproses_pada else '-'
+    elements.append(Paragraph(f"Pada hari ini {tanggal_str}, telah dilakukan serah terima barang sebagai berikut:", normal_justify))
     elements.append(Spacer(1, 16))
 
     elements.append(Paragraph("<b>PIHAK PERTAMA (Yang Menyerahkan):</b>", styles['Normal']))
