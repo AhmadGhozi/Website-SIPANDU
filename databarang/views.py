@@ -39,7 +39,7 @@ def barang_list(request):
         'query': query,
         'kategori_aktif': kategori,
         'total_barang': BarangATK.objects.count(),
-        'total_menipis': BarangATK.objects.filter(stok__gt=0, stok__lte=5).count(),
+        'total_menipis': BarangATK.objects.filter(stok__gt=0, stok__lte=10).count(),
         'total_habis': BarangATK.objects.filter(stok=0).count(),
     }
     return render(request, 'databarang/barang_list.html', context)
@@ -144,7 +144,7 @@ def stok_unit_list(request):
         'kategori_aktif': kategori,
         'unit_kerja': unit_kerja,
         'total_barang': StokUnit.objects.filter(unit_kerja=unit_kerja).count(),
-        'total_menipis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok__gt=0, stok__lte=5).count(),
+        'total_menipis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok__gt=0, stok__lte=10).count(),
         'total_habis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok=0).count(),
     }
     return render(request, 'databarang/stok_unit_list.html', context)
