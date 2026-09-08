@@ -50,16 +50,16 @@
                     <td>{{ surat.tanggal_surat|date:"d M Y" }}</td>
                     <td class="text-end pe-3">
                         <a href="{% url 'persuratan:surat_keluar_detail' surat.pk %}" class="btn btn-sm btn-light border">
-                            <i class="bi bi-eye"></i> Lihat
+                            <i class="bi bi-eye"></i>
                         </a>
                         <a href="{% url 'persuratan:surat_keluar_update' surat.pk %}" class="btn btn-sm btn-light border">
-                            <i class="bi bi-pencil"></i> Edit
+                            <i class="bi bi-pencil"></i>
                         </a>
                         <button type="button" class="btn btn-sm btn-outline-danger"
                                 data-bs-toggle="modal" data-bs-target="#modalHapusSurat"
                                 data-nama="{{ surat.nomor_surat }}"
                                 data-url="{% url 'persuratan:surat_keluar_delete' surat.pk %}">
-                            <i class="bi bi-trash"></i> Hapus
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>

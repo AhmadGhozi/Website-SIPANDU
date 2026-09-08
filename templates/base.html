@@ -340,7 +340,7 @@
                         <i class="bi bi-envelope-fill me-2"></i> Surat
                         <i class="bi bi-chevron-down float-end small mt-1"></i>
                     </a>
-                    <div class="collapse submenu" id="menuSurat">
+                    <div class="collapse submenu {% if 'nota-dinas' in request.path or 'lembar-disposisi' in request.path or 'surat-masuk' in request.path or 'surat-keluar' in request.path %}show{% endif %}" id="menuSurat">
                         <ul class="nav flex-column">
                             <li class="nav-item"><a href="#" class="nav-link">Nota Dinas</a></li>
                             <li class="nav-item"><a href="#" class="nav-link">Lembar Disposisi</a></li>

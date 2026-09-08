@@ -127,7 +127,11 @@ def stok_unit_list(request):
         return redirect('dashboard')
 
     query = request.GET.get('q', '')
+    kategori = request.GET.get('kategori', '')
     daftar_stok = StokUnit.objects.filter(unit_kerja=unit_kerja)
+
+    if kategori:
+        daftar_stok = daftar_stok.filter(kategori=kategori)
 
     if query:
         daftar_stok = daftar_stok.filter(
@@ -137,10 +141,11 @@ def stok_unit_list(request):
     context = {
         'daftar_stok': daftar_stok,
         'query': query,
+        'kategori_aktif': kategori,
         'unit_kerja': unit_kerja,
-        'total_barang': daftar_stok.count(),
-        'total_menipis': daftar_stok.filter(stok__gt=0, stok__lte=5).count(),
-        'total_habis': daftar_stok.filter(stok=0).count(),
+        'total_barang': StokUnit.objects.filter(unit_kerja=unit_kerja).count(),
+        'total_menipis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok__gt=0, stok__lte=5).count(),
+        'total_habis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok=0).count(),
     }
     return render(request, 'databarang/stok_unit_list.html', context)
 
