@@ -105,11 +105,11 @@
                 {% for stok in daftar_stok %}
                 <tr style="border-bottom: 1px solid #F0F1F5;">
                     <td class="ps-3 py-3">
-                        <span class="badge rounded-pill px-3 py-2 bg-success">{{ stok.kode_barang }}</span>
+                        <span class="badge rounded-pill px-3 py-2 bg-success-subtle text-success border border-success-subtle">{{ stok.kode_barang }}</span>
                     </td>
                     <td>
                         {% if stok.kategori == 'atk' %}
-                        <span class="badge bg-primary">ATK</span>
+                        <span class="badge" style="background-color:#DBEAFE; color:#2563EB;">ATK</span>
                         {% else %}
                         <span class="badge" style="background-color:#F3E8FF; color:#7C3AED;">BHP</span>
                         {% endif %}
@@ -119,11 +119,11 @@
                     <td class="fw-semibold">{{ stok.stok }}</td>
                     <td>
                         {% if stok.status_stok == 'habis' %}
-                            <span class="badge bg-danger">Habis</span>
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Habis</span>
                         {% elif stok.status_stok == 'menipis' %}
-                            <span class="badge bg-warning text-dark">Menipis</span>
+                        <span class="badge" style="background-color:#FEF3C7; color:#B45309;">Menipis</span>
                         {% else %}
-                            <span class="badge bg-success">Aman</span>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">Aman</span>
                         {% endif %}
                     </td>
                     <td class="text-end pe-3">
