@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Lembar Disposisi{% endblock %}
+{% block page_title %}Persuratan / Lembar Disposisi{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2 class="fw-bold">Lembar Disposisi</h2>
+    <p class="text-muted mb-0">Daftar disposisi surat masuk</p>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 14px; overflow: hidden;">
+    <div class="table-responsive" style="max-height: calc(100vh - 320px); overflow-y: auto;">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Nomor Surat</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Perihal</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Ditujukan Kepada</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Tanggal</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Status</th>
+                    <th class="text-end pe-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for disposisi in daftar_disposisi %}
+                <tr style="border-bottom: 1px solid #F0F1F5;">
+                    <td class="ps-3 py-3 fw-semibold">{{ disposisi.surat_masuk.nomor_surat }}</td>
+                    <td class="text-muted">{{ disposisi.surat_masuk.perihal }}</td>
+                    <td>
+                        {% for unit in disposisi.unit_tujuan %}
+                            <span class="badge bg-light text-dark border">{{ unit }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>{{ disposisi.tanggal_disposisi|date:"d M Y" }}</td>
+                    <td><span class="badge {{ disposisi.badge_status }}">{{ disposisi.get_status_display }}</span></td>
+                    <td class="text-end pe-3">
+                        <a href="{% url 'persuratan:disposisi_detail' disposisi.pk %}" class="btn btn-sm btn-light border">
+                            <i class="bi bi-eye"></i> Lihat
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Belum ada disposisi.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

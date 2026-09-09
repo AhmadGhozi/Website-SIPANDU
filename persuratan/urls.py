@@ -15,4 +15,9 @@ urlpatterns = [
     path('surat-keluar/<int:pk>/', views.surat_keluar_detail, name='surat_keluar_detail'),
     path('surat-keluar/<int:pk>/edit/', views.surat_keluar_update, name='surat_keluar_update'),
     path('surat-keluar/<int:pk>/hapus/', views.surat_keluar_delete, name='surat_keluar_delete'),
+    
+    path('surat-masuk/<int:surat_pk>/disposisi/tambah/', views.disposisi_create, name='disposisi_create'),
+    path('disposisi/', views.disposisi_list, name='disposisi_list'),
+    path('disposisi/<int:pk>/', views.disposisi_detail, name='disposisi_detail'),
+    path('disposisi/<int:pk>/tindak-lanjut/', views.disposisi_tindak_lanjut, name='disposisi_tindak_lanjut'),
 ]

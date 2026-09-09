@@ -1,5 +1,7 @@
 from django import forms
 from .models import SuratMasuk, SuratKeluar
+from pengguna.models import Profile
+from .models import Disposisi, INSTRUKSI_CHOICES
 
 
 class SuratMasukForm(forms.ModelForm):
@@ -36,4 +38,24 @@ class SuratKeluarForm(forms.ModelForm):
             'sifat': forms.Select(attrs={'class': 'form-select'}),
             'tanggal_surat': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'file_scan': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+        
+class DisposisiForm(forms.ModelForm):
+    unit_tujuan = forms.MultipleChoiceField(
+        choices=Profile.UNIT_KERJA_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        label="Ditujukan Kepada",
+    )
+    instruksi = forms.MultipleChoiceField(
+        choices=INSTRUKSI_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        label="Instruksi/Informasi",
+        required=False,
+    )
+
+    class Meta:
+        model = Disposisi
+        fields = ['unit_tujuan', 'instruksi', 'catatan']
+        widgets = {
+            'catatan': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Catatan tambahan (opsional)'}),
         }

@@ -79,3 +79,51 @@ class SuratKeluar(models.Model):
             'segera': 'bg-danger-subtle text-danger',
             'rahasia': 'bg-dark-subtle text-dark',
         }.get(self.sifat, 'bg-secondary-subtle text-secondary')
+        
+INSTRUKSI_CHOICES = [
+    ('tanggapan_saran', 'Tanggapan/Saran'),
+    ('proses_lebih_lanjut', 'Proses Lebih Lanjut'),
+    ('koordinasi_konfirmasi', 'Koordinasi/Konfirmasi'),
+    ('ajukan_jadwal', 'Ajukan Jadwal'),
+    ('untuk_perhatian', 'Untuk Perhatian'),
+    ('diwakilkan', 'Diwakilkan'),
+    ('sesuai_catatan', 'Sesuai Catatan'),
+]
+
+
+class Disposisi(models.Model):
+    STATUS_CHOICES = [
+        ('menunggu', 'Menunggu Tindak Lanjut'),
+        ('ditindaklanjuti', 'Sudah Ditindaklanjuti'),
+    ]
+
+    surat_masuk = models.ForeignKey(SuratMasuk, on_delete=models.CASCADE, related_name='disposisi')
+
+    unit_tujuan = models.JSONField(default=list, verbose_name="Ditujukan Kepada")
+    instruksi = models.JSONField(default=list, verbose_name="Instruksi/Informasi")
+    catatan = models.TextField(blank=True, verbose_name="Catatan Tambahan")
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='menunggu')
+
+    dibuat_oleh = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='disposisi_dibuat')
+    tanggal_disposisi = models.DateTimeField(auto_now_add=True)
+
+    ditindaklanjuti_oleh = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='disposisi_ditindaklanjuti')
+    tanggal_tindak_lanjut = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-tanggal_disposisi']
+        verbose_name = "Disposisi"
+        verbose_name_plural = "Disposisi"
+
+    def __str__(self):
+        return f"Disposisi - {self.surat_masuk.nomor_surat}"
+
+    @property
+    def label_instruksi(self):
+        mapping = dict(INSTRUKSI_CHOICES)
+        return [mapping.get(i, i) for i in self.instruksi]
+
+    @property
+    def badge_status(self):
+        return 'bg-warning-subtle text-warning' if self.status == 'menunggu' else 'bg-success-subtle text-success'

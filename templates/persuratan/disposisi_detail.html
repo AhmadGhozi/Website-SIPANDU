@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Disposisi{% endblock %}
+{% block page_title %}Persuratan / Lembar Disposisi{% endblock %}
+
+{% block content %}
+
+<nav class="mb-3">
+    <a href="{% url 'persuratan:disposisi_list' %}" class="text-decoration-none fw-semibold text-primary">Lembar Disposisi</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">Detail</span>
+</nav>
+
+<div class="d-flex justify-content-center">
+    <div class="card border-0 shadow-sm w-100" style="max-width: 700px;">
+
+        <div class="card-body border-bottom p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width:42px;height:42px;background-color: var(--navy);">
+                        <i class="bi bi-diagram-3-fill text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">
+                            <a href="{% url 'persuratan:surat_masuk_detail' disposisi.surat_masuk.pk %}" class="text-decoration-none">
+                                {{ disposisi.surat_masuk.nomor_surat }}
+                            </a>
+                        </h5>
+                        <span class="text-muted small">{{ disposisi.surat_masuk.perihal }}</span>
+                    </div>
+                </div>
+                <span class="badge {{ disposisi.badge_status }} px-3 py-2">{{ disposisi.get_status_display }}</span>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="mb-3">
+                <div class="text-muted text-uppercase small mb-1" style="font-size:.7rem;">Ditujukan Kepada</div>
+                <div>
+                    {% for unit in disposisi.unit_tujuan %}
+                        <span class="badge bg-light text-dark border me-1 mb-1">{{ unit }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if disposisi.label_instruksi %}
+            <div class="mb-3">
+                <div class="text-muted text-uppercase small mb-1" style="font-size:.7rem;">Instruksi/Informasi</div>
+                <ul class="mb-0">
+                    {% for label in disposisi.label_instruksi %}
+                        <li>{{ label }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if disposisi.catatan %}
+            <div class="mb-3">
+                <div class="text-muted text-uppercase small mb-1" style="font-size:.7rem;">Catatan Tambahan</div>
+                <p class="mb-0">{{ disposisi.catatan }}</p>
+            </div>
+            {% endif %}
+
+            {% if disposisi.surat_masuk.file_scan %}
+            <a href="{{ disposisi.surat_masuk.file_scan.url }}" target="_blank" class="btn btn-outline-primary w-100 mb-3">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Lihat File Scan Surat
+            </a>
+            {% endif %}
+
+            <div class="row g-0 mb-3">
+                <div class="col-md-6 d-flex gap-2 py-3 border-top border-bottom border-end pe-3">
+                    <i class="bi bi-person-fill text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Dibuat Oleh</div>
+                        <div class="fw-semibold">{{ disposisi.dibuat_oleh.username|default:"-" }}</div>
+                        <div class="small text-muted">{{ disposisi.tanggal_disposisi|date:"d M Y, H:i" }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex gap-2 py-3 border-top border-bottom ps-md-3">
+                    <i class="bi bi-check-circle-fill text-muted"></i>
+                    <div>
+                        <div class="text-muted text-uppercase small" style="font-size:.7rem;">Ditindaklanjuti Oleh</div>
+                        {% if disposisi.ditindaklanjuti_oleh %}
+                            <div class="fw-semibold">{{ disposisi.ditindaklanjuti_oleh.username }}</div>
+                            <div class="small text-muted">{{ disposisi.tanggal_tindak_lanjut|date:"d M Y, H:i" }}</div>
+                        {% else %}
+                            <div class="text-muted">Belum ditindaklanjuti</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'persuratan:disposisi_list' %}" class="btn btn-light border px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Kembali
+                </a>
+                {% if bisa_tindak_lanjut %}
+                <form method="post" action="{% url 'persuratan:disposisi_tindak_lanjut' disposisi.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i> Tandai Sudah Ditindaklanjuti
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
