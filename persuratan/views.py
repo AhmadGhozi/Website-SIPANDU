@@ -1,3 +1,4 @@
+import io
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -6,6 +7,14 @@ from django.utils import timezone
 from .models import SuratMasuk, SuratKeluar, Disposisi
 from .forms import SuratMasukForm, SuratKeluarForm, DisposisiForm
 from dashboard.models import ActivityLog
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from asset.views import build_kop_surat
 
 
 def is_umum_or_kasubag(user):
@@ -300,3 +309,111 @@ def disposisi_tindak_lanjut(request, pk):
         messages.success(request, 'Disposisi berhasil ditandai sebagai ditindaklanjuti.')
 
     return redirect('persuratan:disposisi_detail', pk=pk)
+
+@login_required
+def disposisi_pdf(request, pk):
+    disposisi = get_object_or_404(Disposisi, pk=pk)
+    surat = disposisi.surat_masuk
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle('TitleCustom', parent=styles['Heading1'], alignment=TA_CENTER, fontSize=16)
+    label_style = ParagraphStyle('LabelStyle', parent=styles['Normal'], fontSize=10, fontName='Helvetica-Bold')
+    value_style = ParagraphStyle('ValueStyle', parent=styles['Normal'], fontSize=10)
+
+    elements = []
+    elements.extend(build_kop_surat(styles))
+    elements.append(Paragraph("LEMBAR DISPOSISI", title_style))
+    elements.append(Spacer(1, 16))
+
+    # Tabel info surat
+    info_data = [
+        [Paragraph("Surat Dari", label_style), Paragraph(surat.asal_surat, value_style),
+         Paragraph("Nomor Surat", label_style), Paragraph(surat.nomor_surat, value_style)],
+        [Paragraph("Tanggal Surat", label_style), Paragraph(surat.tanggal_surat.strftime('%d %B %Y'), value_style),
+         Paragraph("Nomor Agenda", label_style), Paragraph(surat.nomor_agenda, value_style)],
+        [Paragraph("Diterima Tanggal", label_style), Paragraph(surat.tanggal_diterima.strftime('%d %B %Y'), value_style),
+         Paragraph("Sifat", label_style), Paragraph(surat.get_sifat_display(), value_style)],
+    ]
+    info_table = Table(info_data, colWidths=[3*cm, 5.5*cm, 3*cm, 5.5*cm])
+    info_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+        ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(info_table)
+
+    # Perihal
+    perihal_table = Table(
+        [[Paragraph("Perihal", label_style), Paragraph(surat.perihal, value_style)]],
+        colWidths=[3*cm, 14*cm],
+    )
+    perihal_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+        ('LINEABOVE', (0, 0), (-1, 0), 0, colors.white),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 16),
+    ]))
+    elements.append(perihal_table)
+    elements.append(Spacer(1, 4))
+
+    # Ditujukan Kepada
+    unit_text = "<br/>".join([f"☑ {u}" for u in disposisi.unit_tujuan]) or "-"
+    tujuan_table = Table(
+        [[Paragraph("Ditujukan Kepada", label_style), Paragraph(unit_text, value_style)]],
+        colWidths=[3*cm, 14*cm],
+    )
+    tujuan_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(tujuan_table)
+    elements.append(Spacer(1, 4))
+
+    # Instruksi/Informasi
+    instruksi_text = "<br/>".join([f"☑ {label}" for label in disposisi.label_instruksi]) or "-"
+    if disposisi.catatan:
+        instruksi_text += f"<br/><br/><b>Catatan:</b> {disposisi.catatan}"
+
+    instruksi_table = Table(
+        [[Paragraph("Instruksi/Informasi", label_style), Paragraph(instruksi_text, value_style)]],
+        colWidths=[3*cm, 14*cm],
+    )
+    instruksi_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 30),
+    ]))
+    elements.append(instruksi_table)
+    elements.append(Spacer(1, 4))
+
+    # Paraf
+    paraf_table = Table(
+        [[Paragraph("Paraf", label_style)], [Spacer(1, 40)]],
+        colWidths=[17*cm],
+    )
+    paraf_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(paraf_table)
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="disposisi_{surat.nomor_surat}.pdf"'
+    return response

@@ -20,4 +20,6 @@ urlpatterns = [
     path('disposisi/', views.disposisi_list, name='disposisi_list'),
     path('disposisi/<int:pk>/', views.disposisi_detail, name='disposisi_detail'),
     path('disposisi/<int:pk>/tindak-lanjut/', views.disposisi_tindak_lanjut, name='disposisi_tindak_lanjut'),
+    
+    path('disposisi/<int:pk>/pdf/', views.disposisi_pdf, name='disposisi_pdf'),
 ]
