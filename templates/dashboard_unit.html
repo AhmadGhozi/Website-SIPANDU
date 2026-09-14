@@ -10,6 +10,27 @@
     <p class="text-muted mb-0">{{ unit_kerja }} — {% now "l, d F Y" %}</p>
 </div>
 
+{% if disposisi_menunggu %}
+<div class="alert alert-warning d-flex align-items-start gap-3 border-0 shadow-sm mb-4" role="alert">
+    <i class="bi bi-envelope-exclamation-fill fs-4"></i>
+    <div class="flex-grow-1">
+        <div class="fw-bold mb-1">
+            Ada {{ disposisi_menunggu|length }} lembar disposisi yang perlu ditindaklanjuti
+        </div>
+        <ul class="mb-2 ps-3">
+            {% for d in disposisi_menunggu|slice:":3" %}
+            <li>
+                <a href="{% url 'persuratan:disposisi_detail' d.pk %}" class="text-decoration-none">
+                    {{ d.surat_masuk.nomor_surat }} — {{ d.surat_masuk.perihal }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'persuratan:disposisi_list' %}" class="btn btn-sm btn-warning">Lihat Semua Disposisi</a>
+    </div>
+</div>
+{% endif %}
+
 <!-- STAT CARDS -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
