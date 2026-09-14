@@ -5,11 +5,24 @@ from .models import ActivityLog
 from databarang.models import BarangATK, StokUnit, PermintaanDinas
 from asset.models import Asset, PermintaanService
 from pengguna.models import Profile
-from persuratan.models import Disposisi
 
 
 def is_kasubag_umum(user):
     return hasattr(user, 'profile') and user.profile.role == 'kasubag_umum'
+
+
+def get_asset_bermasalah(daftar_asset):
+    hasil = []
+    for asset in daftar_asset:
+        pajak = asset.status_pajak
+        oli = asset.status_ganti_oli
+        if pajak['status'] in ['mendekati', 'terlambat'] or oli['status'] in ['mendekati', 'terlambat']:
+            hasil.append({
+                'asset': asset,
+                'pajak': pajak,
+                'oli': oli,
+            })
+    return hasil
 
 
 @login_required
@@ -69,11 +82,6 @@ def dashboard(request):
     if profile and profile.jenis_akun in ['balai', 'bidang']:
         stok_unit = StokUnit.objects.filter(unit_kerja=profile.unit_kerja)
         stok_pusat = BarangATK.objects.all()
-        
-        disposisi_menunggu = Disposisi.objects.filter(
-            status='menunggu',
-            unit_tujuan__contains=profile.unit_kerja,
-        ).order_by('-tanggal_disposisi')
 
         total_stok_unit = stok_unit.count()
         stok_unit_menipis = stok_unit.filter(stok__gt=0, stok__lt=10)
@@ -82,6 +90,8 @@ def dashboard(request):
         perlu_restock = (stok_unit_menipis | stok_unit_habis).order_by('stok')[:8]
 
         total_aman = total_stok_unit - stok_unit_menipis.count() - stok_unit_habis.count()
+
+        asset_bermasalah = get_asset_bermasalah(Asset.objects.filter(lokasi=profile.unit_kerja))
 
         context = {
             'unit_kerja': profile.unit_kerja,
@@ -93,7 +103,8 @@ def dashboard(request):
 
             'perlu_restock': perlu_restock,
             'total_aman': total_aman,
-            'disposisi_menunggu': disposisi_menunggu,
+
+            'asset_bermasalah': asset_bermasalah[:8],
         }
         return render(request, 'dashboard_unit.html', context)
 

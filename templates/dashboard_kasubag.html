@@ -10,6 +10,30 @@
     <p class="text-muted mb-0">{% now "l, d F Y" %}</p>
 </div>
 
+{% if asset_bermasalah %}
+<div class="alert alert-danger d-flex align-items-start gap-3 border-0 shadow-sm mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+    <div class="flex-grow-1">
+        <div class="fw-bold mb-1">
+            Ada {{ asset_bermasalah|length }} aset yang perlu perhatian (pajak/ganti oli)
+        </div>
+        <ul class="mb-2 ps-3">
+            {% for item in asset_bermasalah|slice:":4" %}
+            <li>
+                <a href="{% url 'asset:asset_detail' item.asset.pk %}" class="text-decoration-none">
+                    {{ item.asset.nama_barang }} ({{ item.asset.kode_barang }})
+                </a>
+                —
+                {% if item.pajak.status == 'terlambat' %}<span class="text-danger fw-semibold">Pajak Terlambat</span>{% elif item.pajak.status == 'mendekati' %}<span class="text-warning fw-semibold">Pajak Segera Jatuh Tempo</span>{% endif %}
+                {% if item.oli.status == 'terlambat' %}<span class="text-danger fw-semibold">Ganti Oli Terlambat</span>{% elif item.oli.status == 'mendekati' %}<span class="text-warning fw-semibold">Ganti Oli Segera</span>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'asset:asset_list' %}" class="btn btn-sm btn-danger">Lihat Semua Asset</a>
+    </div>
+</div>
+{% endif %}
+
 <!-- STAT CARDS -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">

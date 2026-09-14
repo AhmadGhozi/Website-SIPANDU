@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'persuratan.context_processors.notifikasi_disposisi',
+                'asset.context_processors.notifikasi_asset',
             ],
         },
     },
