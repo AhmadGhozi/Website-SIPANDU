@@ -6,8 +6,8 @@ from datetime import date, timedelta
 class Asset(models.Model):
     KONDISI_CHOICES = [
         ('baik', 'Baik'),
-        ('kurang_baik', 'Kurang Baik'),
-        ('rusak', 'Rusak'),
+        ('rusak_ringan', 'Rusak Ringan'),
+        ('rusak_berat', 'Rusak Berat'),
     ]
 
     KATEGORI_CHOICES = [
@@ -55,6 +55,7 @@ class Asset(models.Model):
     lokasi = models.CharField(max_length=100, choices=LOKASI_CHOICES, blank=True, verbose_name="Lokasi")
     pengguna = models.CharField(max_length=150, blank=True, verbose_name="Pengguna/Pemegang Saat Ini")
 
+    nomor_plat = models.CharField(max_length=20, blank=True, verbose_name="Nomor Plat")
     register = models.CharField(max_length=20, blank=True, verbose_name="Register")
     tahun_pembelian = models.PositiveIntegerField(blank=True, null=True, verbose_name="Tahun Pembelian")
     nomor_identitas = models.CharField(max_length=255, blank=True, verbose_name="No. Sertifikat/Pabrik/Chasis/Mesin")

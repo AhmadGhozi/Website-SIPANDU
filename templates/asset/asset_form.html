@@ -76,7 +76,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold mb-1">Kondisi *</label>
-                            <p class="text-muted small mb-1" style="font-size: .75rem;">Baik/Kurang Baik/Rusak</p>
+                            <p class="text-muted small mb-1" style="font-size: .75rem;">Baik/Rusak Ringan/Rusak Berat</p>
 
                             <div class="custom-select-wrap" data-target="id_kondisi">
                                 <div class="custom-select-toggle form-control">
@@ -85,8 +85,8 @@
                                 </div>
                                 <div class="custom-select-menu">
                                     <div class="custom-select-option" data-value="baik">Baik</div>
-                                    <div class="custom-select-option" data-value="kurang_baik">Kurang Baik</div>
-                                    <div class="custom-select-option" data-value="rusak">Rusak</div>
+                                    <div class="custom-select-option" data-value="kurang_baik">Rusak Ringan</div>
+                                    <div class="custom-select-option" data-value="rusak">Rusak Berat</div>
                                 </div>
                             </div>
                             {{ form.kondisi }}
@@ -147,6 +147,10 @@
                             {{ form.harga_satuan }}
                         </div>
                         <div class="row g-2 mb-2">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold mb-1">Nomor Plat</label>
+                                {{ form.nomor_plat }}
+                            </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold mb-1">Register</label>
                                 {{ form.register }}
