@@ -376,9 +376,29 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'databarang:permintaan_dinas_list' %}" class="nav-link {% if 'permintaan-dinas' in request.path %}active{% endif %}">
-                        <i class="bi bi-cart-fill me-2"></i> Permintaan ATK
+                    <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuAtk">
+                        <i class="bi bi-cart-fill me-2"></i> ATK
+                        <i class="bi bi-chevron-down float-end small mt-1"></i>
                     </a>
+                    <div class="collapse submenu {% if 'permintaan-dinas' in request.path or 'riwayat-kebutuhan' in request.path or 'databarang' in request.path and 'stok-unit' not in request.path %}show{% endif %}" id="menuAtk">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a href="{% url 'databarang:permintaan_dinas_list' %}" class="nav-link {% if 'permintaan-dinas' in request.path %}active{% endif %}">
+                                    Permintaan ATK/Dinas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'databarang:riwayat_kebutuhan_atk' %}" class="nav-link {% if 'riwayat-kebutuhan' in request.path %}active{% endif %}">
+                                    Riwayat Kebutuhan ATK
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'databarang:barang_list' %}" class="nav-link {% if request.resolver_match.url_name == 'barang_list' %}active{% endif %}">
+                                    Data Barang
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
 
@@ -389,13 +409,8 @@
                         <i class="bi bi-gear-fill me-2"></i> Pengaturan
                         <i class="bi bi-chevron-down float-end small mt-1"></i>
                     </a>
-                    <div class="collapse submenu {% if 'databarang' in request.path and 'permintaan-dinas' not in request.path and 'stok-unit' not in request.path or 'pengguna' in request.path %}show{% endif %}" id="menuPengaturan">
+                    <div class="collapse submenu {% if 'stok-unit' in request.path or 'pengguna' in request.path %}show{% endif %}" id="menuPengaturan">
                         <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a href="{% url 'databarang:barang_list' %}" class="nav-link {% if 'databarang' in request.path and 'stok-unit' not in request.path and 'permintaan-dinas' not in request.path %}active{% endif %}">
-                                    Data Barang
-                                </a>
-                            </li>
                             <li class="nav-item">
                                 <a href="{% url 'pengguna:pengguna_list' %}" class="nav-link {% if 'pengguna' in request.path %}active{% endif %}">
                                     Pengguna

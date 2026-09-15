@@ -6,6 +6,8 @@ from django.utils import timezone
 from .models import BarangATK, StokUnit, PermintaanDinas, PermintaanDinasItem
 from .forms import BarangATKForm, StokUnitForm
 from dashboard.models import ActivityLog
+from django.db.models import Sum
+from pengguna.models import Profile
 
 def is_kasubag_umum(user):
     return hasattr(user, 'profile') and user.profile.role == 'kasubag_umum'
@@ -322,3 +324,35 @@ def permintaan_dinas_detail(request, pk):
     return render(request, 'databarang/permintaan_dinas_detail.html', {
         'permintaan': permintaan, 'is_approver': is_approver,
     })
+    
+@login_required
+def riwayat_kebutuhan_atk(request):
+    if not is_umum_or_kasubag(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+
+    unit_choices = Profile.UNIT_KERJA_CHOICES
+    unit_filter = request.GET.get('unit', unit_choices[0][0] if unit_choices else '')
+
+    tahun_sekarang = timezone.now().year
+    daftar_tahun = list(range(tahun_sekarang - 4, tahun_sekarang + 1))
+    tahun_filter = int(request.GET.get('tahun', tahun_sekarang))
+
+    rekap = PermintaanDinasItem.objects.filter(
+        permintaan__unit_kerja=unit_filter,
+        permintaan__status='disetujui',
+        permintaan__diajukan_pada__year=tahun_filter,
+    ).values(
+        'barang__nama_barang', 'barang__satuan'
+    ).annotate(
+        total_diminta=Sum('jumlah')
+    ).order_by('-total_diminta')
+
+    context = {
+        'unit_choices': unit_choices,
+        'unit_filter': unit_filter,
+        'daftar_tahun': daftar_tahun,
+        'tahun_filter': tahun_filter,
+        'rekap': rekap,
+    }
+    return render(request, 'databarang/riwayat_kebutuhan_atk.html', context)

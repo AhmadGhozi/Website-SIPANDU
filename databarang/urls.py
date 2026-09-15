@@ -17,4 +17,5 @@ urlpatterns = [
     path('permintaan-dinas/', views.permintaan_dinas_list, name='permintaan_dinas_list'),
     path('permintaan-dinas/ajukan/', views.permintaan_dinas_create, name='permintaan_dinas_create'),
     path('permintaan-dinas/<int:pk>/', views.permintaan_dinas_detail, name='permintaan_dinas_detail'),
+    path('riwayat-kebutuhan/', views.riwayat_kebutuhan_atk, name='riwayat_kebutuhan_atk'),
 ]
