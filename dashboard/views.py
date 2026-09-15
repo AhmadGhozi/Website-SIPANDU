@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import ActivityLog
 from databarang.models import BarangATK, StokUnit, PermintaanDinas
@@ -28,6 +28,9 @@ def get_asset_bermasalah(daftar_asset):
 @login_required
 def dashboard(request):
     profile = getattr(request.user, 'profile', None)
+
+    if profile and profile.role == 'tamu':
+        return redirect('tamu:permintaan_data_list')
 
     if is_kasubag_umum(request.user):
         unit_choices = Profile.UNIT_KERJA_CHOICES

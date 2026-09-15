@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Permintaan Data{% endblock %}
+{% block page_title %}Permintaan Data{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="fw-bold">Permintaan Data</h2>
+        <p class="text-muted mb-0">Daftar permintaan data yang diajukan</p>
+    </div>
+    {% if not bisa_proses %}
+    <a href="{% url 'tamu:permintaan_data_create' %}" class="btn btn-primary d-flex align-items-center gap-2">
+        <i class="bi bi-plus-lg"></i> Ajukan Permintaan
+    </a>
+    {% endif %}
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 14px; overflow: hidden;">
+    <div class="table-responsive" style="max-height: calc(100vh - 320px); overflow-y: auto;">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Pemohon</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Asal Instansi</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Keperluan</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Tanggal Ajukan</th>
+                    <th class="py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Status</th>
+                    <th class="text-end pe-3 py-3 text-uppercase small fw-bold text-white" style="background-color: var(--navy);">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for permintaan in daftar_permintaan %}
+                <tr style="border-bottom: 1px solid #F0F1F5;">
+                    <td class="ps-3 py-3 fw-semibold">{{ permintaan.nama_pemohon }}</td>
+                    <td>{{ permintaan.asal_instansi }}</td>
+                    <td class="text-muted">{{ permintaan.keperluan }}</td>
+                    <td>{{ permintaan.diajukan_pada|date:"d M Y" }}</td>
+                    <td><span class="badge {{ permintaan.badge_status }}">{{ permintaan.get_status_display }}</span></td>
+                    <td class="text-end pe-3">
+                        <a href="{% url 'tamu:permintaan_data_detail' permintaan.pk %}" class="btn btn-sm btn-light border">
+                            <i class="bi bi-eye"></i> Lihat
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Belum ada permintaan data.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

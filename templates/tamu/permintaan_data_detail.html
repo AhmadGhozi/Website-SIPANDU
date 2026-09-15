@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Permintaan Data{% endblock %}
+{% block page_title %}Permintaan Data{% endblock %}
+
+{% block content %}
+
+<nav class="mb-3">
+    <a href="{% url 'tamu:permintaan_data_list' %}" class="text-decoration-none fw-semibold text-primary">Permintaan Data</a>
+    <span class="text-muted mx-1">›</span>
+    <span class="text-muted">Detail</span>
+</nav>
+
+<div class="d-flex justify-content-center">
+    <div class="card border-0 shadow-sm w-100" style="max-width: 700px;">
+
+        <div class="card-body border-bottom p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="fw-bold mb-0">{{ permintaan.keperluan }}</h5>
+                    <span class="text-muted small">{{ permintaan.asal_instansi }}</span>
+                </div>
+                <span class="badge {{ permintaan.badge_status }} px-3 py-2">{{ permintaan.get_status_display }}</span>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="mb-3">
+                <div class="text-muted text-uppercase small mb-1" style="font-size:.7rem;">Pemohon</div>
+                <div class="fw-semibold">{{ permintaan.nama_pemohon }}</div>
+                <div class="small text-muted">Diajukan {{ permintaan.diajukan_pada|date:"d M Y, H:i" }} · Akun: {{ permintaan.pemohon.username }}</div>
+            </div>
+
+            <div class="mb-3">
+                <div class="text-muted text-uppercase small mb-1" style="font-size:.7rem;">Data yang Diminta</div>
+                <p class="mb-0">{{ permintaan.data_diminta|linebreaksbr }}</p>
+            </div>
+
+            {% if permintaan.status != 'diajukan' %}
+            <div class="rounded p-3 mb-3 d-flex align-items-start gap-2" style="background-color: #F4F6FB;">
+                <i class="bi bi-info-circle-fill text-muted mt-1"></i>
+                <div>
+                    <div class="small">
+                        Diproses oleh <strong>{{ permintaan.diproses_oleh.username }}</strong>
+                        pada {{ permintaan.diproses_pada|date:"d M Y, H:i" }}
+                    </div>
+                    {% if permintaan.catatan_tanggapan %}
+                        <div class="small text-muted mt-1">Catatan: {{ permintaan.catatan_tanggapan }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if bisa_proses %}
+            <hr>
+            <h6 class="fw-bold mb-2">Tanggapi Permintaan</h6>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <label class="form-label fw-semibold mb-1">Status</label>
+                    {{ form.status }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-1">Catatan Tanggapan</label>
+                    {{ form.catatan_tanggapan }}
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'tamu:permintaan_data_list' %}" class="btn btn-light border px-4">Kembali</a>
+                    <button type="submit" class="btn btn-primary px-4">Simpan Tanggapan</button>
+                </div>
+            </form>
+            {% else %}
+            <a href="{% url 'tamu:permintaan_data_list' %}" class="btn btn-light border px-4">
+                <i class="bi bi-arrow-left me-1"></i> Kembali
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

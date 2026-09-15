@@ -15,6 +15,7 @@ urlpatterns = [
     path('databarang/', include('databarang.urls')),
     path('dataservice/', include('dataservice.urls')),
     path('persuratan/', include('persuratan.urls')),
+    path('permintaan-data/', include('tamu.urls')),
 ]
 
 if settings.DEBUG:
