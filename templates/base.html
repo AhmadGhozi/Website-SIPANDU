@@ -517,6 +517,14 @@
             document.getElementById('sidebar').classList.toggle('show');
         });
 
+        document.addEventListener('click', function (e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (sidebar.classList.contains('show') && !sidebar.contains(e.target) && !(toggle && toggle.contains(e.target))) {
+                sidebar.classList.remove('show');
+            }
+        });
+
         document.querySelectorAll('.custom-select-wrap').forEach(function (wrapper) {
             const select = document.getElementById(wrapper.dataset.target);
             if (!select) return;   // skip kalau select-nya tidak ketemu

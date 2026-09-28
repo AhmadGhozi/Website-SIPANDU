@@ -8,7 +8,7 @@ class PermintaanDataForm(forms.ModelForm):
         fields = ['nama_pemohon', 'asal_instansi', 'keperluan', 'data_diminta']
         widgets = {
             'nama_pemohon': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama lengkap kamu'}),
-            'asal_instansi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Universitas Mulawarman / Dinas Kominfo'}),
+            'asal_instansi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Universitas Muhammadiyah Kalimantan Timur / Dinas Kominfo'}),
             'keperluan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contoh: Penelitian Skripsi / Kebutuhan Dinas'}),
             'data_diminta': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Jelaskan data apa saja yang dibutuhkan'}),
         }
