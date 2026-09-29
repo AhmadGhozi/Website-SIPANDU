@@ -180,9 +180,13 @@ class PindahTanganAsset(models.Model):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name='pindah_tangan')
 
     nama_pihak_pertama = models.CharField(max_length=150, blank=True)
+    jabatan_pihak_pertama = models.CharField(max_length=100, blank=True, verbose_name="Jabatan Pihak Pertama")
+    nip_pihak_pertama = models.CharField(max_length=30, blank=True, verbose_name="NIP Pihak Pertama")
     lokasi_pihak_pertama = models.CharField(max_length=100, blank=True)
 
     nama_pihak_kedua = models.CharField(max_length=150, verbose_name="Diserahkan Kepada")
+    jabatan_pihak_kedua = models.CharField(max_length=100, blank=True, verbose_name="Jabatan Pihak Kedua")
+    nip_pihak_kedua = models.CharField(max_length=30, blank=True, verbose_name="NIP Pihak Kedua")
     lokasi_pihak_kedua = models.CharField(max_length=100, choices=Asset.LOKASI_CHOICES, verbose_name="Lokasi Tujuan")
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='diajukan')

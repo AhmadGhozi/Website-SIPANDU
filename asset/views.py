@@ -569,11 +569,15 @@ def pindah_tangan_pdf(request, pk):
 
     elements.append(Paragraph("<b>PIHAK PERTAMA (Yang Menyerahkan):</b>", styles['Normal']))
     elements.append(Paragraph(f"Nama&nbsp;&nbsp;&nbsp;: {pt.nama_pihak_pertama or '-'}", styles['Normal']))
+    elements.append(Paragraph(f"Jabatan : {pt.jabatan_pihak_pertama or '-'}", styles['Normal']))
+    elements.append(Paragraph(f"NIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {pt.nip_pihak_pertama or '-'}", styles['Normal']))
     elements.append(Paragraph(f"Lokasi&nbsp;&nbsp;: {pt.lokasi_pihak_pertama or '-'}", styles['Normal']))
     elements.append(Spacer(1, 12))
 
     elements.append(Paragraph("<b>PIHAK KEDUA (Yang Menerima):</b>", styles['Normal']))
     elements.append(Paragraph(f"Nama&nbsp;&nbsp;&nbsp;: {pt.nama_pihak_kedua}", styles['Normal']))
+    elements.append(Paragraph(f"Jabatan : {pt.jabatan_pihak_kedua or '-'}", styles['Normal']))
+    elements.append(Paragraph(f"NIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {pt.nip_pihak_kedua or '-'}", styles['Normal']))
     elements.append(Paragraph(f"Lokasi&nbsp;&nbsp;: {pt.get_lokasi_pihak_kedua_display()}", styles['Normal']))
     elements.append(Spacer(1, 20))
 
@@ -608,7 +612,8 @@ def pindah_tangan_pdf(request, pk):
     elements.append(Spacer(1, 40))
 
     ttd_data = [['Yang Menyerahkan,', 'Yang Menerima,'], ['', ''], ['', ''],
-                [f"( {pt.nama_pihak_pertama or '.....................'} )", f"( {pt.nama_pihak_kedua} )"]]
+                [f"( {pt.nama_pihak_pertama or '.....................'} )", f"( {pt.nama_pihak_kedua} )"],
+                [f"NIP. {pt.nip_pihak_pertama or '-'}", f"NIP. {pt.nip_pihak_kedua or '-'}"]]
     ttd_table = Table(ttd_data, colWidths=[8*cm, 8*cm])
     ttd_table.setStyle(TableStyle([
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),

@@ -43,9 +43,31 @@
             <form method="post">
                 {% csrf_token %}
 
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">Jabatan Pihak Pertama</label>
+                        {{ form.jabatan_pihak_pertama }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">NIP Pihak Pertama</label>
+                        {{ form.nip_pihak_pertama }}
+                    </div>
+                </div>
+                
                 <div class="mb-2">
-                    <label class="form-label fw-semibold mb-1">Diserahkan Kepada</label>
+                    <label class="form-label fw-semibold mb-1">Nama Pihak Kedua (Penerima)</label>
                     {{ form.nama_pihak_kedua }}
+                </div>
+                
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">Jabatan Pihak Kedua</label>
+                        {{ form.jabatan_pihak_kedua }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold mb-1">NIP Pihak Kedua</label>
+                        {{ form.nip_pihak_kedua }}
+                    </div>
                 </div>
 
                 <div class="mb-3">

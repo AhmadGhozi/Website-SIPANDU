@@ -116,8 +116,15 @@ class ApprovalServiceForm(forms.Form):
 class PindahTanganForm(forms.ModelForm):
     class Meta:
         model = PindahTanganAsset
-        fields = ['nama_pihak_kedua', 'lokasi_pihak_kedua']
+        fields = [
+            'jabatan_pihak_pertama', 'nip_pihak_pertama',
+            'nama_pihak_kedua', 'jabatan_pihak_kedua', 'nip_pihak_kedua', 'lokasi_pihak_kedua',
+        ]
         widgets = {
+            'jabatan_pihak_pertama': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jabatan pihak pertama (penyerah)'}),
+            'nip_pihak_pertama': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'NIP pihak pertama'}),
             'nama_pihak_kedua': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama penerima'}),
+            'jabatan_pihak_kedua': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jabatan pihak kedua (penerima)'}),
+            'nip_pihak_kedua': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'NIP pihak kedua'}),
             'lokasi_pihak_kedua': forms.Select(attrs={'class': 'd-none'}),
         }
