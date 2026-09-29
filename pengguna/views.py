@@ -6,8 +6,23 @@ from .models import Profile
 from .forms import PenggunaForm
 
 
+def is_admin(user):
+    return hasattr(user, 'profile') and user.profile.role == 'admin'
+
+
+def bisa_lihat_pengguna(user):
+    profile = getattr(user, 'profile', None)
+    if not profile:
+        return False
+    return profile.role in ['admin', 'kasubag_umum', 'kadis']
+
+
 @login_required
 def pengguna_list(request):
+    if not bisa_lihat_pengguna(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+
     query = request.GET.get('q', '')
     daftar_pengguna = Profile.objects.select_related('user').all()
 
@@ -30,6 +45,10 @@ def pengguna_list(request):
 
 @login_required
 def pengguna_create(request):
+    if not is_admin(request.user):
+        messages.error(request, 'Hanya Admin yang dapat mengakses halaman ini.')
+        return redirect('dashboard')
+
     if request.method == 'POST':
         form = PenggunaForm(request.POST)
         if form.is_valid():
@@ -50,6 +69,10 @@ def pengguna_create(request):
 
 @login_required
 def pengguna_update(request, pk):
+    if not is_admin(request.user):
+        messages.error(request, 'Hanya Admin yang dapat mengakses halaman ini.')
+        return redirect('dashboard')
+
     profile = get_object_or_404(Profile, pk=pk)
 
     if request.method == 'POST':
@@ -72,6 +95,10 @@ def pengguna_update(request, pk):
 
 @login_required
 def pengguna_delete(request, pk):
+    if not is_admin(request.user):
+        messages.error(request, 'Hanya Admin yang dapat mengakses halaman ini.')
+        return redirect('dashboard')
+
     profile = get_object_or_404(Profile, pk=pk)
     if request.method == 'POST':
         profile.user.delete()
@@ -81,5 +108,9 @@ def pengguna_delete(request, pk):
 
 @login_required
 def pengguna_detail(request, pk):
+    if not bisa_lihat_pengguna(request.user):
+        messages.error(request, 'Anda tidak memiliki akses ke halaman ini.')
+        return redirect('dashboard')
+
     profile = get_object_or_404(Profile, pk=pk)
     return render(request, 'pengguna/pengguna_detail.html', {'profile': profile})

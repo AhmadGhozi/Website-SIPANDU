@@ -429,6 +429,7 @@
                 {% endif %}
             </ul>
 
+            {% if request.user.profile.role == 'admin' or request.user.profile.role == 'kasubag_umum' or request.user.profile.role == 'kadis' %}
             <div class="section-label">Konfigurasi</div>
             <ul class="nav nav-pills flex-column">
                 <li class="nav-item">
@@ -447,6 +448,7 @@
                     </div>
                 </li>
             </ul>
+            {% endif %}
 
             {% endif %}
 

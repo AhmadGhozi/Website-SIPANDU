@@ -8,7 +8,8 @@ class Profile(models.Model):
         ('manager', 'Manager'),
         ('operator', 'Operator'),
         ('kasubag_umum', 'Kasubag Umum'),
-        ('tamu', 'tamu'),
+        ('kadis', 'Kepala Dinas'),
+        ('tamu', 'Tamu'),
     ]
     STATUS_CHOICES = [
         ('aktif', 'Aktif'),
