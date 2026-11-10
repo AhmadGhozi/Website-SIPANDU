@@ -1,4 +1,4 @@
-# SIPANDU-KB
+# SIPANDU
 
 **Sistem Informasi Pelayanan dan Data Terpadu** — DPPKB Kota Samarinda
 
