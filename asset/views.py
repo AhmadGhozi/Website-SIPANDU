@@ -93,7 +93,8 @@ def asset_list(request):
         daftar_asset = daftar_asset.filter(
             Q(kode_barang__icontains=query) |
             Q(nama_barang__icontains=query) |
-            Q(merk_type__icontains=query)
+            Q(merk_type__icontains=query) |
+            Q(nomor_plat__icontains=query)
         )
 
     context = {
@@ -232,7 +233,7 @@ def asset_qrcode_massal(request):
 
         # Nama instansi kecil di atas
         c.setFont("Helvetica-Bold", 6)
-        c.drawCentredString(x + label_w / 2, y + label_h - 5 * mm, "SIPANDU-KB")
+        c.drawCentredString(x + label_w / 2, y + label_h - 5 * mm, "SIPANDU")
 
         # QR Code
         qr_size = 26 * mm

@@ -8,6 +8,7 @@ from .forms import BarangATKForm, StokUnitForm
 from dashboard.models import ActivityLog
 from django.db.models import Sum
 from pengguna.models import Profile
+BATAS_STOK_MENIPIS = 10
 
 def is_kasubag_umum(user):
     return hasattr(user, 'profile') and user.profile.role == 'kasubag_umum'
@@ -41,7 +42,7 @@ def barang_list(request):
         'query': query,
         'kategori_aktif': kategori,
         'total_barang': BarangATK.objects.count(),
-        'total_menipis': BarangATK.objects.filter(stok__gt=0, stok__lte=10).count(),
+        'total_menipis': sum(1 for b in BarangATK.objects.all() if b.status_stok == 'menipis'),
         'total_habis': BarangATK.objects.filter(stok=0).count(),
     }
     return render(request, 'databarang/barang_list.html', context)
@@ -146,7 +147,7 @@ def stok_unit_list(request):
         'kategori_aktif': kategori,
         'unit_kerja': unit_kerja,
         'total_barang': StokUnit.objects.filter(unit_kerja=unit_kerja).count(),
-        'total_menipis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok__gt=0, stok__lte=10).count(),
+        'total_menipis': sum(1 for s in daftar_stok if s.status_stok == 'menipis'),
         'total_habis': StokUnit.objects.filter(unit_kerja=unit_kerja, stok=0).count(),
     }
     return render(request, 'databarang/stok_unit_list.html', context)
@@ -310,8 +311,8 @@ def permintaan_dinas_detail(request, pk):
                     'stok': 0,
                 }
             )
-            stok_unit.stok += item.jumlah
-            stok_unit.save()
+                stok_unit.stok += item.jumlah
+                stok_unit.save()
 
         permintaan.status = 'disetujui'
         permintaan.catatan_approval = catatan

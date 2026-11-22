@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+BATAS_STOK_MENIPIS = 10
 class BarangATK(models.Model):
     KATEGORI_CHOICES = [
         ('atk', 'ATK'),
@@ -38,7 +39,7 @@ class BarangATK(models.Model):
     def status_stok(self):
         if self.stok == 0:
             return 'habis'
-        elif self.stok <= 10:
+        elif self.stok < BATAS_STOK_MENIPIS:
             return 'menipis'
         return 'aman'
 
@@ -81,7 +82,7 @@ class StokUnit(models.Model):
     def status_stok(self):
         if self.stok == 0:
             return 'habis'
-        elif self.stok <= 10:
+        elif self.stok < BATAS_STOK_MENIPIS:
             return 'menipis'
         return 'aman'
 

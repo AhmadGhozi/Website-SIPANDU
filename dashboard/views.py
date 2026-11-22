@@ -5,6 +5,7 @@ from .models import ActivityLog
 from databarang.models import BarangATK, StokUnit, PermintaanDinas
 from asset.models import Asset, PermintaanService
 from pengguna.models import Profile
+BATAS_STOK_MENIPIS = 10
 
 
 def is_kasubag_umum(user):
@@ -63,7 +64,7 @@ def dashboard(request):
             'total_atk_pending': permintaan_atk.filter(status='diajukan').count(),
             'total_service_pending': permintaan_service.filter(status='diajukan').count(),
             'total_asset': Asset.objects.count(),
-            'total_stok_menipis': BarangATK.objects.filter(stok__gt=0, stok__lt=10).count(),
+            'total_stok_menipis': BarangATK.objects.filter(stok__gt=0, stok__lt=BATAS_STOK_MENIPIS).count(),
             'total_stok_habis': BarangATK.objects.filter(stok=0).count(),
 
             'atk_diajukan': permintaan_atk.filter(status='diajukan').count(),
@@ -87,7 +88,7 @@ def dashboard(request):
         stok_pusat = BarangATK.objects.all()
 
         total_stok_unit = stok_unit.count()
-        stok_unit_menipis = stok_unit.filter(stok__gt=0, stok__lt=10)
+        stok_unit_menipis = stok_unit.filter(stok__gt=0, stok__lt=BATAS_STOK_MENIPIS)
         stok_unit_habis = stok_unit.filter(stok=0)
 
         perlu_restock = (stok_unit_menipis | stok_unit_habis).order_by('stok')[:8]

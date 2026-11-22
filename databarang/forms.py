@@ -36,3 +36,16 @@ class StokUnitForm(forms.ModelForm):
             'stok': forms.NumberInput(attrs={'class': 'form-control'}),
             'keterangan': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Catatan tambahan (opsional)'}),
         }
+    
+        def clean(self):
+            cleaned = super().clean()
+            kode = cleaned.get('kode_barang')
+            nama = (cleaned.get('nama_barang') or '').strip().lower()
+            if kode:
+                barang_pusat = BarangATK.objects.filter(kode_barang=kode).first()
+                if barang_pusat and barang_pusat.nama_barang.strip().lower() != nama:
+                    self.add_error(
+                        'kode_barang',
+                        f'Kode ini dipakai barang Dinas "{barang_pusat.nama_barang}". Gunakan kode lain.'
+                    )
+            return cleaned
